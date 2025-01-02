@@ -42,6 +42,7 @@ dependencies:
   firebase_storage: ^12.3.7
   file_picker: ^8.1.6
   cached_network_image: ^3.4.1
+  flutter_launcher_icons: ^0.14.2
 
 dev_dependencies:
   flutter_test:
