@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1031977312503",
+    "project_id": "oncesocial-201b1",
+    "storage_bucket": "oncesocial-201b1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1031977312503:android:60ced8e0cd197111b7f3f2",
+        "android_client_info": {
+          "package_name": "com.once.oncesocial.oncesocial"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGOp3TSzody_WWU_cG1Q4rdcCgl0zpbac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
