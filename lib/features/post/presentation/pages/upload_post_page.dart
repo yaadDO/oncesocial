@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -23,7 +21,6 @@ class UploadPostPage extends StatefulWidget {
 }
 
 class _UploadPostPageState extends State<UploadPostPage> {
-
   PlatformFile? imagePickedFile;
 
   Uint8List? webImage;
@@ -61,10 +58,9 @@ class _UploadPostPageState extends State<UploadPostPage> {
   }
 
   void uploadPost() {
-    if(imagePickedFile == null || textController.text.isEmpty) {
+    if (imagePickedFile == null || textController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Both image and caption are required'))
-      );
+          const SnackBar(content: Text('Both image and caption are required')));
       return;
     }
 
@@ -83,9 +79,7 @@ class _UploadPostPageState extends State<UploadPostPage> {
 
     if (kIsWeb) {
       postCubit.createPost(newPost, imageBytes: imagePickedFile!.bytes);
-    }
-
-    else {
+    } else {
       postCubit.createPost(newPost, imagePath: imagePickedFile?.path);
     }
   }
@@ -101,18 +95,18 @@ class _UploadPostPageState extends State<UploadPostPage> {
     return BlocConsumer<PostCubit, PostState>(
       builder: (context, state) {
         print(state);
-           if (state is PostsLoading || state is PostUploading) {
-             return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-             );
-           }
+        if (state is PostsLoading || state is PostUploading) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
 
-           return buildUploadPage();
+        return buildUploadPage();
       },
-      listener : (context, state) {
-        if(state is PostsLoaded) {
+      listener: (context, state) {
+        if (state is PostsLoaded) {
           Navigator.pop(context);
         }
       },
@@ -122,34 +116,42 @@ class _UploadPostPageState extends State<UploadPostPage> {
   Widget buildUploadPage() {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Post'),
+        title: Text(
+          'Create Post',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.inversePrimary,
+          ),
+        ),
         foregroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           IconButton(
             onPressed: uploadPost,
-            icon: const Icon(Icons.upload),
+            icon: Icon(
+              Icons.upload,
+              color: Theme.of(context).colorScheme.inversePrimary,
+            ),
           )
         ],
       ),
-
       body: Center(
         child: Column(
           children: [
-            if(kIsWeb && webImage != null) Image.memory(webImage!),
-
-            if(!kIsWeb && imagePickedFile != null)
+            if (kIsWeb && webImage != null) Image.memory(webImage!),
+            if (!kIsWeb && imagePickedFile != null)
               Image.file(File(imagePickedFile!.path!)),
 
-            MaterialButton(
-                onPressed: pickImage,
-                color: Colors.blue,
-                child: const Text('Pick Image'),
+            IconButton(
+              onPressed: pickImage,
+              icon: Icon(Icons.add_a_photo_outlined,size: 40, color: Theme.of(context).colorScheme.inversePrimary,),
             ),
 
-            MyTextField(
-              controller: textController,
-              obscureText: false,
-              hintText: 'caption',
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: MyTextField(
+                controller: textController,
+                obscureText: false,
+                hintText: 'caption',
+              ),
             ),
           ],
         ),

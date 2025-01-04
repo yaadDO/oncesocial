@@ -76,7 +76,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
           return Scaffold(
             appBar: AppBar(
-              title: Text(user.name),
+              title: Text(user.name, style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,),),
               foregroundColor: Theme.of(context).colorScheme.primary,
               actions: [
                 if (isOwnPost)
@@ -87,43 +87,35 @@ class _ProfilePageState extends State<ProfilePage> {
                         builder: (context) => EditProfilePage(user: user),
                       ),
                     ),
-                    icon: const Icon(Icons.settings),
+                    icon: Icon(Icons.edit, color: Theme.of(context).colorScheme.inversePrimary),
                   ),
               ],
             ),
             body: ListView(
               children: [
-                Text(
-                  user.email,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
-                ),
-                const SizedBox(height: 25),
+                const SizedBox(height: 20),
+
                 CachedNetworkImage(
                   imageUrl: user.profileImageUrl,
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
+                  placeholder: (context, url) => const CircularProgressIndicator(),
                   errorWidget: (context, url, error) => Icon(
                     Icons.person,
                     size: 72,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   imageBuilder: (context, imageProvider) => Container(
-                    height: 120,
-                    width: 120,
+                    height: 120, // Ensures the height is fixed
+                    width: 120,  // Ensures the width is fixed to match the height for a circle
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         image: imageProvider,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,  // Ensures the image is fully contained without cropping
                       ),
-                    ),
-                    child: Image(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 25),
                 ProfileStats(
                   postCount: postCount,
@@ -145,33 +137,25 @@ class _ProfilePageState extends State<ProfilePage> {
                     onPressed: followButtonPressed,
                     isFollowing: user.followers.contains(currentUser!.uid),
                   ),
+                const SizedBox(height: 5,),
                 Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
+                  padding: const EdgeInsets.only(left: 10.0),
                   child: Row(
                     children: [
                       Text(
                         'Bio',
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary),
+                            color: Theme.of(context).colorScheme.inversePrimary),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 12),
-                BioBox(text: user.bio),
                 Padding(
-                  padding: const EdgeInsets.only(left: 25.0, top: 25),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Posts',
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary),
-                      ),
-                    ],
-                  ),
+                  padding: const EdgeInsets.fromLTRB(10, 1, 10, 1),
+                  child: BioBox(text: user.bio),
                 ),
-                const SizedBox(height: 10),
+
+                const SizedBox(height: 15),
                 BlocBuilder<PostCubit, PostState>(
                   builder: (context, state) {
                     if (state is PostsLoaded) {

@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -11,7 +10,6 @@ import 'package:oncesocial/features/profile/presentation/cubits/profile_states.d
 import '../../../auth/presentation/components/my_text_field.dart';
 import '../../domain/entities/profile_user.dart';
 import '../cubits/profile_cubit.dart';
-
 
 class EditProfilePage extends StatefulWidget {
   final ProfileUser user;
@@ -97,15 +95,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Widget buildEditPage() {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          onPressed: updateProfile,
+          child: const Icon(Icons.save),
+      ),
       appBar: AppBar(
-        title: const Text('Edit profile'),
+        title: Text(
+          'Edit profile',
+          style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+        ),
         foregroundColor: Theme.of(context).colorScheme.primary,
-        actions: [
-          IconButton(
-            onPressed: updateProfile,
-            icon: const Icon(Icons.save),
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -131,11 +130,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       (kIsWeb && webImage != null)
                           ? Image.memory(
                               webImage!,
-                            fit: BoxFit.cover,
+                              fit: BoxFit.cover,
                             )
-                          :
-
-                      CachedNetworkImage(
+                          : CachedNetworkImage(
                               imageUrl: widget.user.profileImageUrl,
                               placeholder: (context, url) =>
                                   const CircularProgressIndicator(),

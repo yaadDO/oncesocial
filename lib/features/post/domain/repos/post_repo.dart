@@ -1,3 +1,5 @@
+//abstract class PostRepo, which serves as an interface for managing posts and their associated comments
+
 import '../entities/comment.dart';
 import '../entities/post.dart';
 

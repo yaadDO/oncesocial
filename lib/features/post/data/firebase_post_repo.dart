@@ -1,7 +1,12 @@
+//Manages posts and comments in application using Firebase Firestore as the backend
+//Fuction Methods
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oncesocial/features/post/domain/entities/comment.dart';
 import 'package:oncesocial/features/post/domain/entities/post.dart';
 import 'package:oncesocial/features/post/domain/repos/post_repo.dart';
+
+//postsSnapshot is the result of a Firestore query, and docs is a list of documents returned by that query.
 
 class FirebasePostRepo implements PostRepo{
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -13,6 +18,7 @@ class FirebasePostRepo implements PostRepo{
   @override
   Future<void> createPost(Post post) async {
     try {
+      //Adds a new document with the post's ID and converts the Post object to JSON using toJson().
       await postsCollection.doc(post.id).set(post.toJson());
     } catch (e) {
       throw Exception('Error creating post: $e');
@@ -27,9 +33,11 @@ class FirebasePostRepo implements PostRepo{
   @override
   Future<List<Post>> fetchAllPosts() async {
     try {
+      //Retrieves all documents from the 'posts' collection, ordered by the timestamp field.
       final postsSnapshot =
           await postsCollection.orderBy('timestamp', descending: true).get();
 
+      //Converts each Firestore document to a Post object using Post.fromJson
       final List<Post> allPosts = postsSnapshot.docs
       .map((doc) => Post.fromJson(doc.data() as Map<String,dynamic>))
       .toList();
@@ -44,6 +52,7 @@ class FirebasePostRepo implements PostRepo{
   Future<List<Post>> fetchPostsByUserId(String userId) async {
     try {
       final postsSnapshot =
+      //Queries Firestore for posts where the 'userId' field matches the given userId.
           await postsCollection.where('userId', isEqualTo: userId).get();
 
       final userPosts = postsSnapshot.docs

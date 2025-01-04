@@ -143,7 +143,6 @@ class _PostTileState extends State<PostTile> {
             onPressed: () => Navigator.of(context).pop,
             child: const Text('Cancel'),
           ),
-
           TextButton(
             onPressed: () {
               widget.onDeletePressed!();
@@ -163,12 +162,13 @@ class _PostTileState extends State<PostTile> {
       child: Column(
         children: [
           GestureDetector(
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(
-                    builder: (context) => ProfilePage(
-                      uid: widget.post.userId,
-                    ),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfilePage(
+                  uid: widget.post.userId,
                 ),
+              ),
             ),
             child: Padding(
               padding: const EdgeInsets.all(12.0),
@@ -177,21 +177,21 @@ class _PostTileState extends State<PostTile> {
                 children: [
                   postUser?.profileImageUrl != null
                       ? CachedNetworkImage(
-                          imageUrl: postUser!.profileImageUrl,
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.person),
-                          imageBuilder: (context, imageProvider) => Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        )
+                    imageUrl: postUser!.profileImageUrl,
+                    errorWidget: (context, url, error) =>
+                    const Icon(Icons.person),
+                    imageBuilder: (context, imageProvider) => Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  )
                       : const Icon(Icons.person),
                   const SizedBox(width: 10),
                   Text(
@@ -254,14 +254,12 @@ class _PostTileState extends State<PostTile> {
                 ),
                 GestureDetector(
                   onTap: openNewCommentBox,
-                  child: Icon(Icons.comment,
+                  child: Icon(
+                    Icons.comment,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-
                 const SizedBox(width: 5),
-
-                
                 Text(
                   widget.post.comments.length.toString(),
                   style: TextStyle(
@@ -269,31 +267,31 @@ class _PostTileState extends State<PostTile> {
                     fontSize: 12,
                   ),
                 ),
-
                 const Spacer(),
-
-                Text(widget.post.timestamp.toString()),
+                Text(
+                  _formatTimestamp(widget.post.timestamp),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
               ],
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             child: Row(
               children: [
                 Text(
-                    widget.post.userName,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  widget.post.userName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(width: 10),
-
                 Text(widget.post.text),
               ],
             ),
           ),
-
           BlocBuilder<PostCubit, PostState>(
             builder: (context, state) {
               if (state is PostsLoaded) {
@@ -303,14 +301,14 @@ class _PostTileState extends State<PostTile> {
                 if (post.comments.isNotEmpty) {
                   int showCommentCount = post.comments.length;
                   return ListView.builder(
-                      itemCount: showCommentCount,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        final comment = post.comments[index];
+                    itemCount: showCommentCount,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final comment = post.comments[index];
 
-                        return CommentTile(comment: comment);
-                      }
+                      return CommentTile(comment: comment);
+                    },
                   );
                 }
               }
@@ -319,20 +317,21 @@ class _PostTileState extends State<PostTile> {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
-              }
-
-              else if (state is PostsError) {
+              } else if (state is PostsError) {
                 return Center(
                   child: Text(state.message),
                 );
               } else {
                 return const SizedBox();
               }
-
             },
           ),
         ],
       ),
     );
+  }
+
+  String _formatTimestamp(DateTime timestamp) {
+    return '${timestamp.year}-${timestamp.month.toString().padLeft(2, '0')}-${timestamp.day.toString().padLeft(2, '0')} ${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
   }
 }
