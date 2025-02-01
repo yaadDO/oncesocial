@@ -1,7 +1,9 @@
+////todo implement a button to register with google account
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/auth/presentation/components/my_button.dart';
 
+import '../../../../responsive/constrained_scaffold.dart';
 import '../components/my_text_field.dart';
 import '../cubits/auth_cubit.dart';
 
@@ -63,7 +65,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ConstrainedScaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),

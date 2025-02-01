@@ -1,6 +1,9 @@
+//Provides a UI for searching users. It interacts with the SearchCubit to manage the search process and display the results dynamically based on the current state
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../responsive/constrained_scaffold.dart';
 import '../../../profile/presentation/components/user_tile.dart';
 import '../cubits/search_cubits.dart';
 import '../cubits/search_states.dart';
@@ -14,8 +17,11 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController searchController = TextEditingController();
+  //An instance of SearchCubit is retrieved using context.read<SearchCubit>()
   late final searchCubit = context.read<SearchCubit>();
 
+  //A method that gets called whenever the user types something in the search bar.
+  //It reads the query from searchController and calls searchUsers() on searchCubit to initiate the search
   void onSearchChanged() {
     final query = searchController.text;
     searchCubit.searchUsers(query);
@@ -24,6 +30,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
+    //Adds a listener to the searchController when the page is initialized, so the onSearchChanged() method will be triggered whenever the input changes.
     searchController.addListener(onSearchChanged);
   }
 
@@ -35,7 +42,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ConstrainedScaffold(
       appBar: AppBar(
         title: TextField(
           controller: searchController,
@@ -66,6 +73,7 @@ class _SearchPageState extends State<SearchPage> {
           return Center(child: Text(state.message));
         }
 
+        //If no search has been performed yet (initial state)
         return const Center(
           child: Text('Start searching for users...'),
         );
@@ -73,3 +81,5 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 }
+
+//BlocBuilder: A Flutter Bloc widget that listens to the SearchCubit and rebuilds the UI whenever the state changes.

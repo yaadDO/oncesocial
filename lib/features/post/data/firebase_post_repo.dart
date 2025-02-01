@@ -1,19 +1,16 @@
 //Manages posts and comments in application using Firebase Firestore as the backend
 //Fuction Methods
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oncesocial/features/post/domain/entities/comment.dart';
 import 'package:oncesocial/features/post/domain/entities/post.dart';
 import 'package:oncesocial/features/post/domain/repos/post_repo.dart';
 
 //postsSnapshot is the result of a Firestore query, and docs is a list of documents returned by that query.
-
 class FirebasePostRepo implements PostRepo{
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   final CollectionReference postsCollection =
       FirebaseFirestore.instance.collection('posts');
-
 
   @override
   Future<void> createPost(Post post) async {

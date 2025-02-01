@@ -1,5 +1,8 @@
+//todo add Animation
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../responsive/constrained_scaffold.dart';
+import '../../../../themes/themes_cubit.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
 import '../../../post/presentation/cubits/post_cubit.dart';
 import '../../../post/presentation/cubits/post_state.dart';
@@ -17,13 +20,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final postCubit = context.read<PostCubit>();
+  late final PostCubit postCubit = context.read<PostCubit>();
+  final PageController _pageController = PageController(); // Controller for PageView
   int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
     fetchAllPosts();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose(); // Dispose of PageController
+    super.dispose();
   }
 
   void fetchAllPosts() {
@@ -35,26 +45,28 @@ class _HomePageState extends State<HomePage> {
     fetchAllPosts();
   }
 
-  // Updates _currentIndex when a navigation item is tapped and calls setState() to rebuild the widget with the new page.
+  // Updates _currentIndex and animates to the new page
   void _onNavItemTapped(int index) {
-      setState(() {
-        _currentIndex = index;
-      });
+    setState(() {
+      _currentIndex = index;
+    });
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.slowMiddle,
+    );
   }
 
   List<Widget> _pages() {
     return [
       BlocBuilder<PostCubit, PostState>(
         builder: (context, state) {
-          //Shows a loading spinner.
           if (state is PostsLoading || state is PostUploading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is PostsLoaded) {
             final allPosts = state.posts;
             return allPosts.isEmpty
-            //check if no posts availble
                 ? const Center(child: Text('No Posts available'))
-            //if posts are availble
                 : ListView.builder(
               itemCount: allPosts.length,
               itemBuilder: (context, index) {
@@ -72,29 +84,28 @@ class _HomePageState extends State<HomePage> {
           }
         },
       ),
-
-
-
-      // Search Page
       const SearchPage(),
-
       const UploadPostPage(),
-
-      // Profile Page
       ProfilePage(uid: context.read<AuthCubit>().currentUser!.uid),
-
-      // Settings Page
       const SettingsPage(),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages()[_currentIndex], // Display page based on index
+    final themeCubit = context.watch<ThemeCubit>();
+    final inversePrimaryColor = Theme.of(context).colorScheme.inversePrimary;
+    return ConstrainedScaffold(
+      body: PageView(
+        controller: _pageController, // Connect PageController
+        physics: const NeverScrollableScrollPhysics(), // Disable swipe gestures
+        children: _pages(), // Display pages
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onNavItemTapped,
+        selectedItemColor: inversePrimaryColor, // Use inversePrimary for selected items
+        unselectedItemColor: inversePrimaryColor.withOpacity(0.6), // Slightly faded for unselected items
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

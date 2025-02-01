@@ -1,3 +1,5 @@
+//The AppUser class represents a user in the Flutter app, providing a structured way to handle user data such as uid, email, and name
+
 class AppUser {
   final String uid;
   final String email;

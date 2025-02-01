@@ -1,3 +1,4 @@
+//This class extends the AppUser class and represents a user's profile with additional information such as bio, profile image URL, followers, and following.
 import 'package:oncesocial/features/auth/domain/entities/app_user.dart';
 
 class ProfileUser extends AppUser {
@@ -6,6 +7,7 @@ class ProfileUser extends AppUser {
   final List<String> followers;
   final List<String> following;
 
+  //Constructor uses the super keyword to pass common fields (uid, email, and name) to the base AppUser class.
   ProfileUser({
     required this.followers,
     required this.following,
@@ -16,6 +18,8 @@ class ProfileUser extends AppUser {
     required this.profileImageUrl,
   });
 
+  //Creates a copy of the current ProfileUser instance with the ability to update selected fields.
+  //If a parameter is not provided (null), it retains the value from the existing instance using the ?? operator
   ProfileUser copyWith({
     String? newBio,
     String? newProfileImageUrl,
@@ -33,6 +37,7 @@ class ProfileUser extends AppUser {
     );
   }
 
+//Converts a ProfileUser instance into a Map<String, dynamic>
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
@@ -45,6 +50,7 @@ class ProfileUser extends AppUser {
     };
   }
 
+  //A factory constructor that creates a ProfileUser instance from a JSON-like Map<String, dynamic>.
   factory ProfileUser.fromJson(Map<String, dynamic> json) {
     return ProfileUser(
       uid: json['uid'],

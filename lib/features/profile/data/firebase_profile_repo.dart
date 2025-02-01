@@ -1,3 +1,6 @@
+//Code interacts with Firebase Firestore to manage user profiles, including fetching profile data, updating profile information, and handling follow/unfollow actions.
+//
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oncesocial/features/profile/domain/entities/profile_user.dart';
 
@@ -7,6 +10,7 @@ class FirebaseProfileRepo implements ProfileRepo {
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   @override
+  //Fetches the user profile by retrieving a document from the users collection in Firestore using the user’s unique ID
   Future<ProfileUser?> fetchUserProfile(String uid) async {
     try {
       final userDoc =
@@ -30,13 +34,15 @@ class FirebaseProfileRepo implements ProfileRepo {
           );
         }
       }
-
       return null;
     } catch (e) {
       return null;
     }
   }
 
+  //Updates the profile data for a user in the Firestore users collection by:
+  // Locating the document using the user’s unique ID (uid).
+  // Updating the bio and profileImageUrl fields with the values from updatedProfile.
   @override
   Future<void> updateProfile(ProfileUser updatedProfile) async {
     try {
@@ -52,15 +58,19 @@ class FirebaseProfileRepo implements ProfileRepo {
     }
   }
 
+  //Handles follow/unfollow functionality between two users:
   @override
   Future<void> toggleFollow(String currentUid, String targetUid) async {
     try {
+      //Fetches the current user’s document (currentUserDoc) and the target user’s document (targetUserDoc) from Firestore.
       final currentUserDoc =
           await firebaseFirestore.collection('users').doc(currentUid).get();
       final targetUserDoc =
           await firebaseFirestore.collection('users').doc(targetUid).get();
 
+  //Checks if both documents exist and have data.
       if (currentUserDoc.exists && targetUserDoc.exists) {
+        //Extracts the current user's following list.
         final currentUserData = currentUserDoc.data();
         final targetUserData = targetUserDoc.data();
 
@@ -68,18 +78,21 @@ class FirebaseProfileRepo implements ProfileRepo {
           final List<String> currentFollowing =
               List<String>.from(currentUserData['following'] ?? []);
 
+          //Removes the target user from the following list of the current user.
           if (currentFollowing.contains(targetUid)) {
             await firebaseFirestore.collection('users').doc(currentUid).update({
               'following': FieldValue.arrayRemove([targetUid])
             });
+          //Removes the current user from the followers list of the target user.
             await firebaseFirestore.collection('users').doc(currentUid).update({
               'followers': FieldValue.arrayRemove([currentUid])
             });
           } else {
+            //Adds the target user to the following list of the current user.
             await firebaseFirestore.collection('users').doc(currentUid).update({
               'following': FieldValue.arrayUnion([targetUid])
             });
-
+            //Adds the current user to the followers list of the target user.
             await firebaseFirestore.collection('users').doc(currentUid).update({
               'followers': FieldValue.arrayUnion([currentUid])
             });

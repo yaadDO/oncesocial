@@ -1,3 +1,5 @@
+//Displays the user's information, such as name, profile image, bio, followers, following, and posts. The page supports both viewing and editing profiles,
+//todo Use caching for frequently accessed data
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +8,7 @@ import 'package:oncesocial/features/profile/presentation/components/follow_butto
 import 'package:oncesocial/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:oncesocial/features/profile/presentation/cubits/profile_states.dart';
 import 'package:oncesocial/features/profile/presentation/pages/follower_page.dart';
+import '../../../../responsive/constrained_scaffold.dart';
 import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
 import '../../../post/presentation/components/post_tile.dart';
@@ -24,7 +27,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  //Provides information about the currently authenticated user
   late final authCubit = context.read<AuthCubit>();
+  //Manages fetching and updating user profile data
   late final profileCubit = context.read<ProfileCubit>();
 
   late AppUser? currentUser = authCubit.currentUser;
@@ -34,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-
+    //Fetches the profile data of the user identified by widget.uid when the page is loaded
     profileCubit.fetchUserProfile(widget.uid);
   }
 
@@ -74,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
         if (state is ProfileLoaded) {
           final user = state.profileUser;
 
-          return Scaffold(
+          return ConstrainedScaffold(
             appBar: AppBar(
               title: Text(user.name, style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,),),
               foregroundColor: Theme.of(context).colorScheme.primary,
@@ -94,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
             body: ListView(
               children: [
                 const SizedBox(height: 20),
-
+                //Uses CachedNetworkImage to load the profile picture efficiently.
                 CachedNetworkImage(
                   imageUrl: user.profileImageUrl,
                   placeholder: (context, url) => const CircularProgressIndicator(),
@@ -117,6 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
 
                 const SizedBox(height: 25),
+                //Tapping navigates to the FollowerPage to view detailed follower/following lists.
                 ProfileStats(
                   postCount: postCount,
                   followerCount: user.followers.length,
@@ -133,6 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
 
                 if (!isOwnPost)
+                  //followButtonPressed method updates both the local state and triggers an action in the ProfileCubit
                   FollowButton(
                     onPressed: followButtonPressed,
                     isFollowing: user.followers.contains(currentUser!.uid),
@@ -156,6 +163,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
 
                 const SizedBox(height: 15),
+
+                //Displays posts related to the widget.uid or a loading indicator if posts are being fetched.
                 BlocBuilder<PostCubit, PostState>(
                   builder: (context, state) {
                     if (state is PostsLoaded) {

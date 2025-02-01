@@ -1,8 +1,10 @@
+//todo implement a button to login with google account
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/auth/presentation/components/my_button.dart';
 import 'package:oncesocial/features/auth/presentation/cubits/auth_cubit.dart';
 
+import '../../../../responsive/constrained_scaffold.dart';
 import '../components/my_text_field.dart';
 
 class LoginPage extends StatefulWidget {
@@ -46,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ConstrainedScaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),

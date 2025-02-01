@@ -1,6 +1,4 @@
-
 //auth repository - outlines the posible auth operations for this app
-
 import 'package:oncesocial/features/auth/domain/entities/app_user.dart';
 
 abstract class AuthRepo {

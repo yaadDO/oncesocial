@@ -1,17 +1,18 @@
+//Allows users to edit their profile information, including their profile image and bio.
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/profile/presentation/cubits/profile_states.dart';
-
+import '../../../../responsive/constrained_scaffold.dart';
 import '../../../auth/presentation/components/my_text_field.dart';
 import '../../domain/entities/profile_user.dart';
 import '../cubits/profile_cubit.dart';
 
 class EditProfilePage extends StatefulWidget {
+  //Provides the current user details
   final ProfileUser user;
 
   const EditProfilePage({super.key, required this.user});
@@ -21,12 +22,15 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  //Stores the image file selected by the user
   PlatformFile? imagePickedFile;
 
+  //Stores the image data in bytes for webPlatforms
   Uint8List? webImage;
 
   final bioTextController = TextEditingController();
 
+  //Opens a file picker for users to select an image.
   Future<void> pickImage() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -34,6 +38,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
 
     if (result != null) {
+      //Sets imagePickedFile for mobile platforms and webImage for web platforms.
       setState(() {
         imagePickedFile = result.files.first;
 
@@ -44,9 +49,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  //Gathers the updated bio and image data and calls the ProfileCubit's updateProfile method.
   void updateProfile() async {
     final profileCubit = context.read<ProfileCubit>();
-
     final String uid = widget.user.uid;
     final String? newBio =
         bioTextController.text.isNotEmpty ? bioTextController.text : null;
@@ -61,6 +66,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         imageWebBytes: imageWebBytes,
       );
     } else {
+      //Navigates back if no changes are detected
       Navigator.pop(context);
     }
   }
@@ -69,6 +75,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileCubit, ProfileState>(
       builder: (context, state) {
+        //Displays a loading indicator when ProfileState is ProfileLoading
         if (state is ProfileLoading) {
           return const Scaffold(
             body: Center(
@@ -82,6 +89,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           );
         } else {
+          //Shows the EditProfilePage when not loading.
           return buildEditPage();
         }
       },
@@ -93,8 +101,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  //Displays the selected image if available or the current profile image using CachedNetworkImage.
   Widget buildEditPage() {
-    return Scaffold(
+    return ConstrainedScaffold(
       floatingActionButton: FloatingActionButton(
           onPressed: updateProfile,
           child: const Icon(Icons.save),
@@ -116,8 +125,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 color: Theme.of(context).colorScheme.secondary,
                 shape: BoxShape.circle,
               ),
+              //clipBehavior: Ensures that the image stays within the circular shape defined in the BoxDecoration of the container.
+              //Crops any overflowing parts of the image to maintain a clean, circular profile picture
               clipBehavior: Clip.hardEdge,
               child:
+                  //Determines the image source based on web or mobile
                   //mobile
                   (!kIsWeb && imagePickedFile != null)
                       ? Image.file(
@@ -132,6 +144,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               webImage!,
                               fit: BoxFit.cover,
                             )
+                      //CachedNetworkImage: Displays the profile image from a network URL
                           : CachedNetworkImage(
                               imageUrl: widget.user.profileImageUrl,
                               placeholder: (context, url) =>

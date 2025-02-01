@@ -9,7 +9,10 @@ import '../../../auth/presentation/cubits/auth_cubit.dart';
 class CommentTile extends StatefulWidget {
   final Comment comment;
 
-  const CommentTile({super.key, required this.comment});
+  const CommentTile({
+    super.key,
+    required this.comment,
+  });
 
   @override
   State<CommentTile> createState() => _CommentTileState();
@@ -17,21 +20,24 @@ class CommentTile extends StatefulWidget {
 
 class _CommentTileState extends State<CommentTile> {
   AppUser? currentUser;
+  //This flag checks whether the comment belongs to the current user or not. It will be used to decide whether to show the delete options.
   bool isOwnPost = false;
 
   @override
   void initState() {
     super.initState();
-
     getCurrentUser();
   }
 
   void getCurrentUser() {
     final authCubit = context.read<AuthCubit>();
     currentUser = authCubit.currentUser;
+
+    //Checks if the comment was made by the current user. If true, isOwnPost is set to true
     isOwnPost = (widget.comment.userId == currentUser!.uid);
   }
 
+  //Delete Comment via showDialog Function
   void showOptions() {
     showDialog(
       context: context,
@@ -42,14 +48,14 @@ class _CommentTileState extends State<CommentTile> {
             onPressed: () => Navigator.of(context).pop,
             child: const Text('Cancel'),
           ),
-          TextButton(
+          IconButton(
             onPressed: () {
               context
                   .read<PostCubit>()
                   .deleteComment(widget.comment.postId, widget.comment.id);
               Navigator.of(context).pop();
             },
-            child: const Text('Delete'),
+            icon: Icon(Icons.delete, color: Colors.grey,),
           ),
         ],
       ),

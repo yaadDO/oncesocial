@@ -1,3 +1,5 @@
+//Handles various user profile operations, including fetching profiles, updating profile information, and toggling follow status
+
 import 'dart:typed_data';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/profile/domain/repository/profile_repo.dart';
@@ -6,7 +8,9 @@ import '../../domain/entities/profile_user.dart';
 import 'profile_states.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
+  //his field represents the repository for profile-related operations, such as fetching or updating user profiles.
   final ProfileRepo profileRepo;
+  //This field represents the repository for handling image uploads, with separate methods for web and mobile platforms.
   final StorageRepo storageRepo;
 
   ProfileCubit({
@@ -14,12 +18,14 @@ class ProfileCubit extends Cubit<ProfileState> {
     required this.storageRepo,
   }) : super(ProfileInitial());
 
+  //Fetches a user profile by their uid
   Future<void> fetchUserProfile(String uid) async {
     try {
       emit(ProfileLoading());
       final user = await profileRepo.fetchUserProfile(uid);
 
       if(user != null) {
+        //When the profile is successfully fetched.
         emit(ProfileLoaded(user));
       } else{
         emit(ProfileError('User not found'));
@@ -29,11 +35,13 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
+  //This method fetches a user profile and directly returns a ProfileUser object or null if the user is not found
   Future<ProfileUser?> getUserProfile(String uid) async {
     final user = await profileRepo.fetchUserProfile(uid);
     return user;
   }
 
+  //Updates the user's profile information
   Future<void> updateProfile({
     required String uid,
     String? newBio,
@@ -84,6 +92,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
+  //This method toggles the follow/unfollow status between the current user and a target user.
   Future <void> toggleFollow(String currentUserId, String targetUserId) async {
     try {
       await profileRepo.toggleFollow(currentUserId, targetUserId);

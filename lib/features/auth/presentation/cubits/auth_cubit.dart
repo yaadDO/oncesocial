@@ -1,3 +1,6 @@
+//This class is part of a Flutter Bloc architecture used to manage user authentication state in a Flutter application
+//It extends the Cubit class, which emits different AuthState instances based on the authentication process's progress or outcome.
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/auth/domain/entities/app_user.dart';
 import '../../domain/repository/auth_repo.dart';
@@ -7,6 +10,7 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthRepo authRepo;
   AppUser? _currentUser;
 
+  //initializes the AuthCubit with the initial state AuthInitial, indicating that no authentication process has started yet.
   AuthCubit({required this.authRepo}) : super(AuthInitial());
 
   //check if user is already authenticated
@@ -21,7 +25,8 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  //get current user
+  //Get current user
+  //Private
   AppUser? get currentUser => _currentUser;
 
   //login

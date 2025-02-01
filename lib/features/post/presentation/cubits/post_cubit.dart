@@ -1,3 +1,6 @@
+//This class is a Cubit in app that uses the BLoC
+// pattern to manage state. The PostCubit class is responsible for handling the creation, deletion, and retrieval of posts, as well as comments and likes.
+
 import 'dart:typed_data';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/post/presentation/cubits/post_state.dart';
@@ -7,7 +10,9 @@ import '../../domain/entities/post.dart';
 import '../../domain/repos/post_repo.dart';
 
 class PostCubit extends Cubit<PostState> {
+  //Responsible for interacting with the data layer
   final PostRepo postRepo;
+  //Handles image uploads for posts
   final StorageRepo storageRepo;
 
   PostCubit({
@@ -19,6 +24,9 @@ class PostCubit extends Cubit<PostState> {
   Future<void> createPost(Post post,
   {String? imagePath, Uint8List? imageBytes}) async {
     String? imageUrl;
+
+    //This method creates a new post. It can optionally handle image uploads for both:
+    //Mobile uploads or Web uploads
 
     //mobile uploads
     try {
@@ -34,6 +42,7 @@ class PostCubit extends Cubit<PostState> {
       await storageRepo.uploadPostImageWeb(imageBytes, post.id);
     }
 
+    //Creates a new post by calling createPost() on the PostRepo
     final newPost = post.copyWith(imageUrl: imageUrl);
 
     postRepo.createPost(newPost);

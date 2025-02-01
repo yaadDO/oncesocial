@@ -1,3 +1,5 @@
+//This code defines a FirebaseAuthRepo class that implements an AuthRepo interface for handling user authentication
+//provides key authentication operations such as user login, registration, logout, and retrieving the currently logged-in useR
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:oncesocial/features/auth/domain/entities/app_user.dart';

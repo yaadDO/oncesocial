@@ -34,8 +34,10 @@ class _PostTileState extends State<PostTile> {
 
   bool isOwnPost = false;
 
+  //An instance of AppUser, representing the currently authenticated user.
   AppUser? currentUser;
 
+  //An instance of AppUser, representing the currently authenticated user.
   ProfileUser? postUser;
 
   @override
@@ -45,12 +47,14 @@ class _PostTileState extends State<PostTile> {
     fetchPostUser();
   }
 
+  //Determine if the current user is the one who created the post.
   void getCurrentUser() {
     final authCubit = context.read<AuthCubit>();
     currentUser = authCubit.currentUser;
     isOwnPost = (widget.post.userId == currentUser!.uid);
   }
 
+  //Fetch the profile of the user who created the post
   Future<void> fetchPostUser() async {
     final fetchedUser = await profileCubit.getUserProfile(widget.post.userId);
     if (fetchedUser != null) {
@@ -63,6 +67,7 @@ class _PostTileState extends State<PostTile> {
   void toggleLikePost() {
     final isLiked = widget.post.likes.contains(currentUser!.uid);
 
+    //Checks if the post is already liked by the current user. If liked, it removes the current user's UID from the likes list; otherwise, it adds it.
     setState(() {
       if (isLiked) {
         widget.post.likes.remove(currentUser!.uid);
@@ -112,6 +117,8 @@ class _PostTileState extends State<PostTile> {
     );
   }
 
+  //Creates a new comment and adds it to the current post using the postCubit.
+  //! force dart to treat it as non-nullable
   void addComment() {
     final newComment = Comment(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -122,17 +129,20 @@ class _PostTileState extends State<PostTile> {
       timestamp: DateTime.now(),
     );
 
+    //Check ensures that an empty comment is not added.
     if (commentTextController.text.isNotEmpty) {
       postCubit.addComment(widget.post.id, newComment);
     }
   }
 
+  //disposes to free up resources
   @override
   void dispose() {
     commentTextController.dispose();
     super.dispose();
   }
 
+  //Dialog box with options to delete the post
   void showOptions() {
     showDialog(
       context: context,
@@ -161,6 +171,7 @@ class _PostTileState extends State<PostTile> {
       color: Theme.of(context).colorScheme.secondary,
       child: Column(
         children: [
+          //Displays Profile Picture on Post
           GestureDetector(
             onTap: () => Navigator.push(
               context,
@@ -178,12 +189,15 @@ class _PostTileState extends State<PostTile> {
                   postUser?.profileImageUrl != null
                       ? CachedNetworkImage(
                     imageUrl: postUser!.profileImageUrl,
+                    //If no pfp is Detected
                     errorWidget: (context, url, error) =>
                     const Icon(Icons.person),
                     imageBuilder: (context, imageProvider) => Container(
+                      //Adjust the size
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
+                        //Ensures pfp becomes out as a circle
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           image: imageProvider,
@@ -202,6 +216,7 @@ class _PostTileState extends State<PostTile> {
                     ),
                   ),
                   const Spacer(),
+                  //Checks if post isOwnPost
                   if (isOwnPost)
                     GestureDetector(
                       onTap: showOptions,
@@ -214,6 +229,7 @@ class _PostTileState extends State<PostTile> {
               ),
             ),
           ),
+          //Display Posted image
           CachedNetworkImage(
             imageUrl: widget.post.imageUrl,
             height: 430,
@@ -222,6 +238,7 @@ class _PostTileState extends State<PostTile> {
             placeholder: (context, url) => const SizedBox(height: 438),
             errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
+
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Row(
@@ -230,6 +247,7 @@ class _PostTileState extends State<PostTile> {
                   width: 50,
                   child: Row(
                     children: [
+                      // like button logic
                       GestureDetector(
                         onTap: toggleLikePost,
                         child: Icon(
@@ -242,6 +260,7 @@ class _PostTileState extends State<PostTile> {
                         ),
                       ),
                       const SizedBox(width: 5),
+                      //Amount of likes
                       Text(
                         widget.post.likes.length.toString(),
                         style: TextStyle(
@@ -260,6 +279,7 @@ class _PostTileState extends State<PostTile> {
                   ),
                 ),
                 const SizedBox(width: 5),
+                //Amount of comments
                 Text(
                   widget.post.comments.length.toString(),
                   style: TextStyle(
@@ -268,6 +288,7 @@ class _PostTileState extends State<PostTile> {
                   ),
                 ),
                 const Spacer(),
+                //Timestamp
                 Text(
                   _formatTimestamp(widget.post.timestamp),
                   style: TextStyle(
@@ -292,12 +313,13 @@ class _PostTileState extends State<PostTile> {
               ],
             ),
           ),
+
+          //The BlocBuilder is used to rebuild the widget when the PostCubit's state changes
           BlocBuilder<PostCubit, PostState>(
             builder: (context, state) {
               if (state is PostsLoaded) {
                 final post = state.posts
                     .firstWhere((post) => (post.id == widget.post.id));
-
                 if (post.comments.isNotEmpty) {
                   int showCommentCount = post.comments.length;
                   return ListView.builder(
@@ -331,6 +353,7 @@ class _PostTileState extends State<PostTile> {
     );
   }
 
+//This method formats the timestamp of the post into a readable string
   String _formatTimestamp(DateTime timestamp) {
     return '${timestamp.year}-${timestamp.month.toString().padLeft(2, '0')}-${timestamp.day.toString().padLeft(2, '0')} ${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
   }
