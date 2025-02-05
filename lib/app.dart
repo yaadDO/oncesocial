@@ -12,6 +12,9 @@ import 'package:oncesocial/features/storage/data/firebase_storage_repo.dart';
 import 'package:oncesocial/themes/themes_cubit.dart';
 import 'features/home/presentation/pages/home_page.dart';
 import 'features/post/presentation/cubits/post_cubit.dart';
+import 'features/publicChat/data/firebase_chat_repo.dart';
+import 'features/publicChat/presentation/cubits/chat_cubit.dart';
+import 'features/publicChat/presentation/pages/chat_page.dart';
 import 'features/search/data/firebase_search_repo.dart';
 import 'features/search/presentation/cubits/search_cubits.dart';
 
@@ -40,6 +43,11 @@ class MyApp extends StatelessWidget {
           create: (context) => ProfileCubit(
             profileRepo: firebaseProfileRepo,
             storageRepo: firebaseStorageRepo,
+          ),
+        ),
+        BlocProvider<ChatCubit>(
+          create: (context) => ChatCubit(
+            chatRepo: FirebaseChatRepo(),
           ),
         ),
         BlocProvider<PostCubit>(
@@ -83,6 +91,7 @@ class MyApp extends StatelessWidget {
           ),
           routes: {
             '/AboutPage': (context) => const AboutPage(),
+            '/ChatPage': (context) => const ChatPage(),
           },
         ),
       ),

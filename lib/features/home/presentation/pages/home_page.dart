@@ -12,6 +12,8 @@ import '../../../post/presentation/components/post_tile.dart';
 import 'package:oncesocial/features/search/presentation/pages/search_page.dart';
 import 'package:oncesocial/features/settings/pages/settings_page.dart';
 
+import '../../../publicChat/presentation/pages/chat_page.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -84,6 +86,7 @@ class _HomePageState extends State<HomePage> {
           }
         },
       ),
+      const ChatPage(),
       const SearchPage(),
       const UploadPostPage(),
       ProfilePage(uid: context.read<AuthCubit>().currentUser!.uid),
@@ -111,6 +114,11 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.home),
             label: 'Home',
             backgroundColor: Colors.cyan,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
+            backgroundColor: Colors.blue,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
