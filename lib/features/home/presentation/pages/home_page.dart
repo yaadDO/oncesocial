@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../responsive/constrained_scaffold.dart';
 import '../../../../themes/themes_cubit.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
+import '../../../post/presentation/components/textpost_tile.dart';
 import '../../../post/presentation/cubits/post_cubit.dart';
 import '../../../post/presentation/cubits/post_state.dart';
 import '../../../post/presentation/pages/upload_post_page.dart';
@@ -71,10 +72,17 @@ class _HomePageState extends State<HomePage> {
               itemCount: allPosts.length,
               itemBuilder: (context, index) {
                 final post = allPosts[index];
-                return PostTile(
-                  post: post,
-                  onDeletePressed: () => deletePost(post.id),
-                );
+                if (post.imageUrl.isEmpty) {
+                  return TextPostTile(
+                    post: post,
+                    onDeletePressed: () => deletePost(post.id),
+                  );
+                } else {
+                  return PostTile(
+                    post: post,
+                    onDeletePressed: () => deletePost(post.id),
+                  );
+                }
               },
             );
           } else if (state is PostsError) {
