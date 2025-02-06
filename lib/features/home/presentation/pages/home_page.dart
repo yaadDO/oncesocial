@@ -10,8 +10,6 @@ import '../../../post/presentation/pages/upload_post_page.dart';
 import '../../../profile/presentation/pages/profile_page.dart';
 import '../../../post/presentation/components/post_tile.dart';
 import 'package:oncesocial/features/search/presentation/pages/search_page.dart';
-import 'package:oncesocial/features/settings/pages/settings_page.dart';
-
 import '../../../publicChat/presentation/pages/chat_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -54,7 +52,7 @@ class _HomePageState extends State<HomePage> {
     });
     _pageController.animateToPage(
       index,
-      duration: const Duration(milliseconds: 350),
+      duration: const Duration(milliseconds: 250),
       curve: Curves.slowMiddle,
     );
   }
@@ -87,10 +85,9 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       const ChatPage(),
-      const SearchPage(),
       const UploadPostPage(),
+      const SearchPage(),
       ProfilePage(uid: context.read<AuthCubit>().currentUser!.uid),
-      const SettingsPage(),
     ];
   }
 
@@ -118,12 +115,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
             label: 'Chat',
-            backgroundColor: Colors.blue,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.blueGrey,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add),
@@ -131,14 +123,14 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: Colors.teal,
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+            backgroundColor: Colors.green,
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
             backgroundColor: Colors.purple,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-            backgroundColor: Colors.blueGrey,
           ),
         ],
       ),

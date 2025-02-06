@@ -8,6 +8,7 @@ import 'package:oncesocial/features/profile/presentation/components/follow_butto
 import 'package:oncesocial/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:oncesocial/features/profile/presentation/cubits/profile_states.dart';
 import 'package:oncesocial/features/profile/presentation/pages/follower_page.dart';
+import 'package:oncesocial/features/settings/pages/settings_page.dart';
 import '../../../../responsive/constrained_scaffold.dart';
 import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
@@ -85,6 +86,15 @@ class _ProfilePageState extends State<ProfilePage> {
               foregroundColor: Theme.of(context).colorScheme.primary,
               actions: [
                 if (isOwnPost)
+                  IconButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsPage(),
+                      ),
+                    ),
+                    icon: Icon(Icons.settings_outlined, color: Theme.of(context).colorScheme.inversePrimary),
+                  ),
                   IconButton(
                     onPressed: () => Navigator.push(
                       context,

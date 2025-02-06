@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../domain/entities/message.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -29,7 +28,7 @@ class MessageBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              message.senderName,
+              message.senderName.isEmpty ? 'Anonymous' : message.senderName,
               style: TextStyle(
                 color: isMe ? Colors.white : Colors.black,
                 fontSize: 12,
@@ -43,6 +42,33 @@ class MessageBubble extends StatelessWidget {
                 color: isMe ? Colors.white : Colors.black,
               ),
             ),
+            if (message.timestamp == null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isMe ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Sending...',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: isMe ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),

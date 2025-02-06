@@ -7,6 +7,7 @@ import 'chat_state.dart';
 class ChatCubit extends Cubit<ChatState> {
   final ChatRepo chatRepo;
 
+
   ChatCubit({required this.chatRepo}) : super(ChatInitial());
 
   Stream<List<Message>> getMessagesStream() {

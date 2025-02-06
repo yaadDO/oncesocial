@@ -21,8 +21,11 @@ class SettingsPage extends StatelessWidget {
     //A boolean value indicating whether dark mode is currently enabled.
 
     return ConstrainedScaffold(
+      appBar: AppBar(
+        title: const Text('Settings'),
+      ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(4, 20, 4, 4),
+        padding: const EdgeInsets.fromLTRB(4, 1, 4, 4),
         child: Column(
           children: [
             ListTile(
@@ -72,7 +75,10 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
               trailing: Icon(Icons.logout),
-              onTap: () => context.read<AuthCubit>().logout(),
+              onTap: () {
+                    context.read<AuthCubit>().logout();
+                    Navigator.pop(context);
+              }
             ),
           ],
         ),

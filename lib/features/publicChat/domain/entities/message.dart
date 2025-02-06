@@ -5,14 +5,16 @@ class Message {
   final String text;
   final String senderId;
   final String senderName;
-  final DateTime timestamp;
+  final DateTime? timestamp; // Will be null until the server returns a timestamp
+  final DateTime localTimestamp; // Always set on sending
 
   Message({
     required this.id,
     required this.text,
     required this.senderId,
     required this.senderName,
-    required this.timestamp,
+    required this.localTimestamp,
+    this.timestamp,
   });
 
   factory Message.fromMap(Map<String, dynamic> map) {
@@ -20,8 +22,11 @@ class Message {
       id: map['id'] ?? '',
       text: map['text'] ?? '',
       senderId: map['senderId'] ?? '',
-      senderName: map['senderName'] ?? '',
-      timestamp: (map['timestamp'] as Timestamp).toDate(),
+      senderName: map['senderName'] ?? 'Anonymous',
+      // If the server timestamp hasn't come through yet, this remains null.
+      timestamp: map['timestamp'] != null ? (map['timestamp'] as Timestamp).toDate() : null,
+      // Convert localTimestamp from int (milliseconds) to DateTime
+      localTimestamp: DateTime.fromMillisecondsSinceEpoch(map['localTimestamp'] as int),
     );
   }
 
@@ -32,6 +37,7 @@ class Message {
       'senderId': senderId,
       'senderName': senderName,
       'timestamp': timestamp,
+      'localTimestamp': localTimestamp.millisecondsSinceEpoch,
     };
   }
 }

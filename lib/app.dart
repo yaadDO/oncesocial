@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ChatCubit>(
           create: (context) => ChatCubit(
-            chatRepo: FirebaseChatRepo(),
+            chatRepo: FirebaseChatRepo(profileRepo: firebaseProfileRepo),
           ),
         ),
         BlocProvider<PostCubit>(
