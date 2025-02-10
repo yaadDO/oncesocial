@@ -150,15 +150,15 @@ class _PostTileState extends State<PostTile> {
         title: const Text('Delete Post'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop,
+            onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
-          TextButton(
+          IconButton(
             onPressed: () {
               widget.onDeletePressed!();
               Navigator.of(context).pop();
             },
-            child: const Text('Delete'),
+            icon: const Icon(Icons.delete)
           ),
         ],
       ),
@@ -334,7 +334,6 @@ class _PostTileState extends State<PostTile> {
                   );
                 }
               }
-
               if (state is PostsLoading) {
                 return const Center(
                   child: CircularProgressIndicator(),

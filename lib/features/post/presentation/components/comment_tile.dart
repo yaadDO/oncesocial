@@ -42,6 +42,7 @@ class _CommentTileState extends State<CommentTile> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.blueGrey,
         title: const Text('Delete Comment'),
         actions: [
           TextButton(
@@ -55,7 +56,7 @@ class _CommentTileState extends State<CommentTile> {
                   .deleteComment(widget.comment.postId, widget.comment.id);
               Navigator.of(context).pop();
             },
-            icon: Icon(Icons.delete, color: Colors.grey,),
+            icon: const Icon(Icons.delete, color: Colors.grey,),
           ),
         ],
       ),

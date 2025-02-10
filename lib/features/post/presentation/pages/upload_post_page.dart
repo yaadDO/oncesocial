@@ -6,8 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../responsive/constrained_scaffold.dart';
 import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/components/my_text_field.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
@@ -123,78 +121,91 @@ class _UploadPostPageState extends State<UploadPostPage> {
         return buildUploadPage();
       },
       listener: (context, state) {
-        if (state is PostsLoaded) {
-          Navigator.pop(context);
-        }
       },
     );
   }
 
   Widget buildUploadPage() {
-    return ConstrainedScaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Create Post',
+          isTextPost ? 'Text Post' : 'Image Post',
           style: TextStyle(
             color: Theme.of(context).colorScheme.inversePrimary,
           ),
         ),
-        foregroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           IconButton(
-            onPressed: uploadPost,
             icon: Icon(
-              Icons.upload,
+              isTextPost ? Icons.image_rounded : Icons.text_fields_rounded,
               color: Theme.of(context).colorScheme.inversePrimary,
+              size: 35,
             ),
-          )
+            tooltip: isTextPost ? 'Switch to Image Post' : 'Switch to Text Post',
+            onPressed: () {
+              setState(() {
+                isTextPost = !isTextPost;
+                if (isTextPost) {
+                  imagePickedFile = null;
+                  webImage = null;
+                }
+              });
+            },
+          ),
         ],
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Toggle switch between Image Post and Text Post.
-              SwitchListTile(
-                title: Text(isTextPost ? 'Text Post' : 'Image Post'),
-                value: isTextPost,
-                onChanged: (value) {
-                  setState(() {
-                    isTextPost = value;
-                    // If switching to text post, clear any selected image.
-                    if (isTextPost) {
-                      imagePickedFile = null;
-                      webImage = null;
-                    }
-                  });
-                },
-              ),
-              // Show image preview only when not in text post mode.
-              if (!isTextPost) ...[
-                if (kIsWeb && webImage != null) Image.memory(webImage!),
-                if (!kIsWeb && imagePickedFile != null)
-                  Image.file(File(imagePickedFile!.path!)),
-                IconButton(
-                  onPressed: pickImage,
-                  icon: Icon(
-                    Icons.add_a_photo_outlined,
-                    size: 40,
-                    color: Theme.of(context).colorScheme.inversePrimary,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(6, 16, 6, 5),
+              child: Column(
+                children: [
+                  if (!isTextPost) ...[
+                    if (kIsWeb && webImage != null) Image.memory(webImage!),
+                    if (!kIsWeb && imagePickedFile != null)
+                      Image.file(File(imagePickedFile!.path!)),
+                    IconButton(
+                      onPressed: pickImage,
+                      icon: Icon(
+                        Icons.add_a_photo_outlined,
+                        size: 40,
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                      ),
+                    ),
+                  ],
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: MyTextField(
+                      controller: textController,
+                      obscureText: false,
+                      hintText:
+                      isTextPost ? 'What\'s happening?' : 'Caption',
+                    ),
                   ),
-                ),
-              ],
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: MyTextField(
-                  controller: textController,
-                  obscureText: false,
-                  hintText: isTextPost ? 'What\'s happening?' : 'Caption',
-                ),
+                ],
               ),
-            ],
+            ),
           ),
+          // Overlay the loading indicator if uploading
+          if (context.watch<PostCubit>().state is PostUploading ||
+              context.watch<PostCubit>().state is PostsLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: uploadPost,
+        child: Icon(
+          Icons.upload,
+          color: Theme.of(context).colorScheme.inversePrimary,
         ),
       ),
     );
   }
+
 }

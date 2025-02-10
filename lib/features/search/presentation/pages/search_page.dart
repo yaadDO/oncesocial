@@ -56,7 +56,7 @@ class _SearchPageState extends State<SearchPage> {
         if (state is SearchLoaded) {
           if (state.users.isEmpty) {
             return const Center(
-              child: Text('No users found'),
+              child: Text('No users found!'),
             );
           }
 

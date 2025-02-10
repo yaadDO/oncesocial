@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,8 +16,6 @@ import '../../../post/presentation/cubits/post_cubit.dart';
 import '../components/bio_box.dart';
 import '../components/profile_stats.dart';
 import 'edit_profile_page.dart';
-// Import the text post tile component.
-
 
 class ProfilePage extends StatefulWidget {
   final String uid;
@@ -30,9 +27,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Provides information about the currently authenticated user
+  // Provides information about the currently authenticated user.
   late final authCubit = context.read<AuthCubit>();
-  // Manages fetching and updating user profile data
+  // Manages fetching and updating user profile data.
   late final profileCubit = context.read<ProfileCubit>();
 
   late AppUser? currentUser = authCubit.currentUser;
@@ -47,36 +44,13 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void followButtonPressed() {
-    final profileState = profileCubit.state;
-    if (profileState is! ProfileLoaded) {
-      return;
-    }
-    final profileUser = profileState.profileUser;
-    final isFollowing = profileUser.followers.contains(currentUser!.uid);
-
-    setState(() {
-      if (isFollowing) {
-        profileUser.followers.remove(currentUser!.uid);
-      } else {
-        profileUser.followers.add(currentUser!.uid);
-      }
-    });
-
     profileCubit.toggleFollow(currentUser!.uid, widget.uid);
-
-    // Optionally, update the local state again if needed.
-    setState(() {
-      if (isFollowing) {
-        profileUser.followers.add(currentUser!.uid);
-      } else {
-        profileUser.followers.remove(currentUser!.uid);
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isOwnPost = (widget.uid == currentUser!.uid);
+    // Check if the profile being viewed belongs to the authenticated user.
+    bool isOwnProfile = (widget.uid == currentUser!.uid);
 
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
@@ -93,7 +67,8 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               foregroundColor: Theme.of(context).colorScheme.primary,
               actions: [
-                if (isOwnPost)
+                // Only allow the user to access settings and edit if it's their own profile.
+                if (isOwnProfile) ...[
                   IconButton(
                     onPressed: () => Navigator.push(
                       context,
@@ -106,18 +81,19 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: Theme.of(context).colorScheme.inversePrimary,
                     ),
                   ),
-                IconButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditProfilePage(user: user),
+                  IconButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProfilePage(user: user),
+                      ),
+                    ),
+                    icon: Icon(
+                      Icons.edit,
+                      color: Theme.of(context).colorScheme.inversePrimary,
                     ),
                   ),
-                  icon: Icon(
-                    Icons.edit,
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                  ),
-                ),
+                ],
               ],
             ),
             body: ListView(
@@ -161,8 +137,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                 ),
-                if (!isOwnPost)
-                // FollowButton triggers follow/unfollow actions.
+                const SizedBox(height: 6),
+                // Only show the follow button if the profile doesn't belong to the current user.
+                if (!isOwnProfile)
                   FollowButton(
                     onPressed: followButtonPressed,
                     isFollowing: user.followers.contains(currentUser!.uid),
@@ -175,8 +152,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       Text(
                         'Bio',
                         style: TextStyle(
-                            color:
-                            Theme.of(context).colorScheme.inversePrimary),
+                          color:
+                          Theme.of(context).colorScheme.inversePrimary,
+                        ),
                       ),
                     ],
                   ),

@@ -49,35 +49,52 @@ class FollowerPage extends StatelessWidget {
       ),
     );
   }
-  Widget _buildUserList(List<String> uids, String emptyMassage,  BuildContext context) {
+  Widget _buildUserList(List<String> uids, String emptyMessage, BuildContext context) {
     return uids.isEmpty
-    //If the uids list is empty, a centered message (e.g., "No followers") is displayed.
-        ? Center(child: Text(emptyMassage))
+        ? Center(child: Text(emptyMessage))
         : ListView.builder(
-        itemCount: uids.length,
-        itemBuilder: (context, index) {
-          final uid = uids[index];
+      itemCount: uids.length,
+      itemBuilder: (context, index) {
+        final uid = uids[index];
+        return FutureBuilder(
+          future: context.read<ProfileCubit>().getUserProfile(uid),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final user = snapshot.data!;
+              return ListTile(
+                // Add profile image
+                leading: CircleAvatar(
+                  backgroundImage: user.profileImageUrl.isNotEmpty
+                      ? NetworkImage(user.profileImageUrl)
+                      : null,
+                  child: user.profileImageUrl.isEmpty
+                      ? const Icon(Icons.person)
+                      : null,
+                ),
+                title: Text(user.name),
+                // Add tap navigation
+                onTap: () => _navigateToProfile(context, user.uid),
+              );
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return const ListTile(
+                leading: CircleAvatar(child: Icon(Icons.person)),
+                title: Text('Loading...'),
+              );
+            } else {
+              return const ListTile(title: Text('User not found'));
+            }
+          },
+        );
+      },
+    );
+  }
 
-          //Fetches user profile data asynchronously using the ProfileCubit's getUserProfile(uid) method.
-          return FutureBuilder(
-              future: context.read<ProfileCubit>().getUserProfile(uid),
-              builder: (context, snapshot) {
-                //If snapshot.hasData: The user profile was successfully fetched, and their name is displayed in a ListTile.
-                if(snapshot.hasData) {
-                  final user = snapshot.data!;
-                  return ListTile(title: Text(user.name));
-                }
-                //If ConnectionState.waiting: The data is still loading, and a placeholder "Loading.." message is displayed.
-                else if (snapshot.connectionState ==
-                ConnectionState.waiting) {
-                  return ListTile(title: Text('Loading..'));
-                }
-                else {
-                  return ListTile(title: Text('User not found..'));
-                }
-              }
-          );
-        }
+// Navigation handler
+  void _navigateToProfile(BuildContext context, String uid) {
+    Navigator.pushNamed(
+      context,
+      '/profile', // Replace with your actual profile route name
+      arguments: uid,
     );
   }
 }

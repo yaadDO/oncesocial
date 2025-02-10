@@ -93,9 +93,11 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   //This method toggles the follow/unfollow status between the current user and a target user.
-  Future <void> toggleFollow(String currentUserId, String targetUserId) async {
+  Future<void> toggleFollow(String currentUserId, String targetUserId) async {
     try {
       await profileRepo.toggleFollow(currentUserId, targetUserId);
+      //Refetch the target user's profile to update the state
+      await fetchUserProfile(targetUserId);
     } catch (e) {
       emit(ProfileError('Error toggling follow: $e'));
     }
