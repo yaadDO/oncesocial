@@ -14,6 +14,9 @@ import 'package:oncesocial/themes/themes_cubit.dart';
 import 'features/home/presentation/pages/home_page.dart';
 import 'features/notifications/notifs.dart';
 import 'features/post/presentation/cubits/post_cubit.dart';
+import 'features/privateMessaging/data/firebase_msg_repo.dart';
+import 'features/privateMessaging/presentation/cubits/msg_cubit.dart';
+import 'features/privateMessaging/presentation/pages/messaging_page.dart';
 import 'features/profile/presentation/pages/profile_page.dart';
 import 'features/publicChat/data/firebase_chat_repo.dart';
 import 'features/publicChat/presentation/cubits/chat_cubit.dart';
@@ -61,6 +64,11 @@ class _MyAppState extends State<MyApp> {
           create: (context) => ProfileCubit(
             profileRepo: firebaseProfileRepo,
             storageRepo: firebaseStorageRepo,
+          ),
+        ),
+        BlocProvider<MsgCubit>(
+          create: (context) => MsgCubit(
+            msgRepo: FirebaseMsgRepo(),
           ),
         ),
         BlocProvider<ChatCubit>(
@@ -114,6 +122,7 @@ class _MyAppState extends State<MyApp> {
             ),
             // Note: the route name below should match the one used in notifs.dart.
             '/NotificationPage': (context) => const NotificationPage(),
+            '/MessagingPage': (context) => const MessagingPage(),
           },
         ),
       ),
