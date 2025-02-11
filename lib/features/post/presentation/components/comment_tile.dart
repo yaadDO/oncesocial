@@ -5,6 +5,7 @@ import 'package:oncesocial/features/post/presentation/cubits/post_cubit.dart';
 
 import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
+import 'delete_dialog.dart';
 
 class CommentTile extends StatefulWidget {
   final Comment comment;
@@ -38,30 +39,14 @@ class _CommentTileState extends State<CommentTile> {
   }
 
   //Delete Comment via showDialog Function
-  void showOptions() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.blueGrey,
-        title: const Text('Delete Comment'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop,
-            child: const Text('Cancel'),
-          ),
-          IconButton(
-            onPressed: () {
-              context
-                  .read<PostCubit>()
-                  .deleteComment(widget.comment.postId, widget.comment.id);
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(Icons.delete, color: Colors.grey,),
-          ),
-        ],
-      ),
-    );
-  }
+  void showOptions() => showDeleteDialog(
+    context: context,
+    title: 'Delete Comment',
+    onDelete: () => context.read<PostCubit>().deleteComment(
+      widget.comment.postId,
+      widget.comment.id,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {

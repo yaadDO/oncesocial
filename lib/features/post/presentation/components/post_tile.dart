@@ -13,6 +13,7 @@ import '../../../profile/domain/entities/profile_user.dart';
 import '../../../profile/presentation/cubits/profile_cubit.dart';
 import '../cubits/post_state.dart';
 import 'comment_tile.dart';
+import 'delete_dialog.dart';
 
 class PostTile extends StatefulWidget {
   final Post post;
@@ -143,27 +144,11 @@ class _PostTileState extends State<PostTile> {
   }
 
   //Dialog box with options to delete the post
-  void showOptions() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Post'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          IconButton(
-            onPressed: () {
-              widget.onDeletePressed!();
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(Icons.delete)
-          ),
-        ],
-      ),
-    );
-  }
+  void showOptions() => showDeleteDialog(
+    context: context,
+    title: 'Delete Post',
+    onDelete: () => widget.onDeletePressed?.call(),
+  );
 
   @override
   Widget build(BuildContext context) {

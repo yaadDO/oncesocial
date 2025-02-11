@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MessagePrivate {
+  final String id;
   final String senderId;
   final String receiverId;
   final String messagepriv;
@@ -8,6 +9,7 @@ class MessagePrivate {
   final String chatRoomId;
 
   MessagePrivate({
+    required this.id,
     required this.senderId,
     required this.receiverId,
     required this.messagepriv,
@@ -25,8 +27,9 @@ class MessagePrivate {
     };
   }
 
-  factory MessagePrivate.fromMap(Map<String, dynamic> map) {
+  factory MessagePrivate.fromMap(Map<String, dynamic> map, String id) {
     return MessagePrivate(
+      id: id,
       senderId: map['senderId'],
       receiverId: map['receiverId'],
       messagepriv: map['messagepriv'],

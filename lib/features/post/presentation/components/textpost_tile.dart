@@ -15,6 +15,7 @@ import '../../domain/entities/comment.dart';
 import '../cubits/post_cubit.dart';
 import '../cubits/post_state.dart';
 import 'comment_tile.dart';
+import 'delete_dialog.dart';
 
 class TextPostTile extends StatefulWidget {
   final Post post;
@@ -58,27 +59,11 @@ class _TextPostTileState extends State<TextPostTile> {
     }
   }
 
-  void showOptions() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Post'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              widget.onDeletePressed?.call();
-              Navigator.of(context).pop();
-            },
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-  }
+  void showOptions() => showDeleteDialog(
+    context: context,
+    title: 'Delete Post',
+    onDelete: () => widget.onDeletePressed?.call(),
+  );
 
   // Opens a dialog to add a new comment.
   void openNewCommentBox() {

@@ -55,8 +55,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   // Returns a list of pages.
-  //
-  //The first page (home page) is now using a CustomScrollView with a SliverAppBar.
   List<Widget> _pages() {
     return [
       BlocBuilder<PostCubit, PostState>(
@@ -170,12 +168,12 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.add),
             label: 'Create Post',
-            backgroundColor: Colors.teal,
+            backgroundColor: Colors.green,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.message_outlined),
+            icon: Icon(Icons.send),
             label: 'DM',
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.teal,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

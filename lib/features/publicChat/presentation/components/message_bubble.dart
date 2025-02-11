@@ -25,8 +25,6 @@ class MessageBubble extends StatelessWidget {
             context: context,
             builder: (context) => AlertDialog(
               title: const Text('Delete Message'),
-              content: const Text(
-                  'Are you sure you want to delete this message?'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
@@ -37,7 +35,7 @@ class MessageBubble extends StatelessWidget {
                     Navigator.pop(context);
                     context.read<ChatCubit>().deleteMessage(message.id);
                   },
-                  icon: const Icon(Icons.delete)
+                  icon: const Icon(Icons.delete, color: Colors.red,)
                 ),
               ],
             ),

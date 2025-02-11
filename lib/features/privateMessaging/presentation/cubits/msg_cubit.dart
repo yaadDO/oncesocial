@@ -37,4 +37,12 @@ class MsgCubit extends Cubit<MsgState> {
     _messagesSubscription?.cancel();
     return super.close();
   }
+
+  void deleteMessage(String messageId) async {
+    try {
+      await msgRepo.deleteMessage(messageId);
+    } catch (e) {
+      emit(MsgError(e.toString()));
+    }
+  }
 }

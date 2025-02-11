@@ -18,8 +18,12 @@ class FirebaseMsgRepo implements MsgRepo {
         .orderBy('timestamp', descending: false)
         .snapshots()
         .map((snapshot) => snapshot.docs
-        .map((doc) => MessagePrivate.fromMap(doc.data()))
+        .map((doc) => MessagePrivate.fromMap(doc.data(), doc.id))
         .toList());
   }
 
+  @override
+  Future<void> deleteMessage(String messageId) async {
+    await _firestore.collection('messagesprivate').doc(messageId).delete();
+  }
 }
