@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../profile/domain/entities/profile_user.dart';
 import '../domain/entities/message.dart';
 import '../domain/repositories/message_repo.dart';
 
@@ -25,5 +26,16 @@ class FirebaseMsgRepo implements MsgRepo {
   @override
   Future<void> deleteMessage(String messageId) async {
     await _firestore.collection('messagesprivate').doc(messageId).delete();
+  }
+
+  Future<List<ProfileUser>> fetchUsersByIds(List<String> userIds) async {
+    if (userIds.isEmpty) return [];
+
+    final query = await FirebaseFirestore.instance
+        .collection('users')
+        .where(FieldPath.documentId, whereIn: userIds)
+        .get();
+
+    return query.docs.map((doc) => ProfileUser.fromJson(doc.data())).toList();
   }
 }

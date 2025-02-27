@@ -98,5 +98,34 @@ class FirebaseProfileRepo implements ProfileRepo {
       }
     } catch (e) {}
   }
+  @override
+  Future<List<ProfileUser>> fetchUsersByIds(List<String> uids) async {
+    if (uids.isEmpty) return [];
+    final users = <ProfileUser>[];
+    // Process in chunks of 10 due to Firestore limitations
+    for (var i = 0; i < uids.length; i += 10) {
+      final chunk = uids.sublist(
+        i,
+        i + 10 > uids.length ? uids.length : i + 10,
+      );
+      final querySnapshot = await firebaseFirestore
+          .collection('users')
+          .where(FieldPath.documentId, whereIn: chunk)
+          .get();
+      for (final doc in querySnapshot.docs) {
+        final data = doc.data();
+        users.add(ProfileUser(
+          uid: doc.id,
+          email: data['email'] ?? '',
+          name: data['name'] ?? '',
+          bio: data['bio'] ?? '',
+          profileImageUrl: data['profileImageUrl'] ?? '',
+          followers: List<String>.from(data['followers'] ?? []),
+          following: List<String>.from(data['following'] ?? []),
+        ));
+      }
+    }
+    return users;
+  }
 }
 

@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/privateMessaging/domain/entities/message.dart';
-
-
 import '../../../auth/presentation/cubits/auth_cubit.dart';
-
-
 import '../../../profile/data/firebase_profile_repo.dart';
 import '../../../profile/domain/entities/profile_user.dart';
 import '../components/message_bubble.dart';

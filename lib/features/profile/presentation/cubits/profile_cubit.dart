@@ -1,5 +1,4 @@
 //Handles various user profile operations, including fetching profiles, updating profile information, and toggling follow status
-
 import 'dart:typed_data';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/profile/domain/repository/profile_repo.dart';
@@ -24,10 +23,22 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(ProfileLoading());
       final user = await profileRepo.fetchUserProfile(uid);
 
-      if(user != null) {
-        //When the profile is successfully fetched.
-        emit(ProfileLoaded(user));
-      } else{
+      if (user != null) {
+        // Fetch all followed users' profiles in parallel
+        final futures = user.following
+            .map((id) => profileRepo.fetchUserProfile(id))
+            .toList();
+        final followedUsers = await Future.wait(futures);
+
+        final followingProfiles = <String, ProfileUser>{};
+        for (final followedUser in followedUsers) {
+          if (followedUser != null) {
+            followingProfiles[followedUser.uid] = followedUser;
+          }
+        }
+
+        emit(ProfileLoaded(user, followingProfiles));
+      } else {
         emit(ProfileError('User not found'));
       }
     } catch (e) {
@@ -96,8 +107,8 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> toggleFollow(String currentUserId, String targetUserId) async {
     try {
       await profileRepo.toggleFollow(currentUserId, targetUserId);
-      //Refetch the target user's profile to update the state
-      await fetchUserProfile(targetUserId);
+      // Refetch the current user's profile to update the following list
+      await fetchUserProfile(currentUserId);
     } catch (e) {
       emit(ProfileError('Error toggling follow: $e'));
     }

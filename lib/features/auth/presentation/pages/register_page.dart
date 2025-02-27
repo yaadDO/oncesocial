@@ -73,17 +73,21 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.lock_open_rounded,
-                  size: 80,
-                  color: Theme.of(context).colorScheme.primary,
+                ClipOval(
+                  child: Image.asset(
+                    'assets/icon.png',
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                const SizedBox(height: 9),
+                const SizedBox(height: 15),
+
                 Text(
                   'Join the Cult',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                    fontSize: 20,
                   ),
                 ),
 
@@ -91,11 +95,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 MyTextField(
                   controller: nameController,
-                  hintText: 'Name',
+                  hintText: 'Username',
                   obscureText: false,
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
 
                 MyTextField(
                   controller: emailController,
@@ -103,7 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   obscureText: false,
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
 
                 MyTextField(
                   controller: pwController,
@@ -111,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   obscureText: true,
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
 
                 MyTextField(
                   controller: confirmPwController,
@@ -148,6 +152,33 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ],
+                ),
+
+                const SizedBox(height: 25),
+
+                IconButton(
+                  onPressed: () => context.read<AuthCubit>().signInWithGoogle(),
+                  icon: Image.asset(
+                    'assets/google_icon.png', // Add this asset to your project
+                    width: 37,
+                    height: 37,
+                  ),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.all(16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                      side: BorderSide(color: Colors.grey.shade300),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Sign in with Google',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                    fontSize: 14,
+                  ),
                 ),
               ],
             ),

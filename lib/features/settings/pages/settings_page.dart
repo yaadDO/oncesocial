@@ -13,12 +13,8 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //Manages theme cubit
-    //context.watch<ThemeCubit>() Retrieves the current instance of ThemeCubit and listens for any changes in the theme state.
     final themeCubit = context.watch<ThemeCubit>();
-
     bool isDarkMode = themeCubit.isDarkMode;
-    //A boolean value indicating whether dark mode is currently enabled.
 
     return ConstrainedScaffold(
       appBar: AppBar(
@@ -35,8 +31,6 @@ class SettingsPage extends StatelessWidget {
                   color: Theme.of(context).colorScheme.inversePrimary,
                 ),
               ),
-              //A CupertinoSwitch (iOS-style switch)
-              //When the switch is toggled, the toggleTheme() method in ThemeCubit is called to switch between dark and light themes.
               trailing: CupertinoSwitch(
                   value: isDarkMode,
                   onChanged: (value) {
@@ -55,30 +49,52 @@ class SettingsPage extends StatelessWidget {
               onTap: () => Share.share('com.once.oncesocial.oncesocial'),
             ),
             ListTile(
-              title: Text(
-                'About',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
+                title: Text(
+                  'About',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
                 ),
-              ),
-              trailing: Icon(Icons.info_outline),
-              onTap: () {
-                Navigator.of(context).push(_createRoute());
-              }
+                trailing: Icon(Icons.info_outline),
+                onTap: () {
+                  Navigator.of(context).push(_createRoute());
+                }
             ),
             const Spacer(),
             ListTile(
-              title: Text(
-                'Logout',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
+                title: Text(
+                  'Logout',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
                 ),
-              ),
-              trailing: Icon(Icons.logout),
-              onTap: () {
-                    context.read<AuthCubit>().logout();
-                    Navigator.pop(context);
-              }
+                trailing: const Icon(Icons.logout),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Are you sure?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Cancel'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Logout'),
+                            onPressed: () {
+                              context.read<AuthCubit>().logout();
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
             ),
           ],
         ),
@@ -114,4 +130,3 @@ Route _createRoute() {
     transitionDuration: const Duration(milliseconds: 1000),
   );
 }
-

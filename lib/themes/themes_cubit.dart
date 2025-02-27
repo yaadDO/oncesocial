@@ -6,9 +6,9 @@ import 'light_mode.dart';
 
 class ThemeCubit extends Cubit<ThemeData> {
   static const String _themeKey = 'isDarkMode';
-  bool _isDarkMode = false;
+  bool _isDarkMode = true; // Default to dark mode
 
-  ThemeCubit() : super(lightMode) {
+  ThemeCubit() : super(darkMode) {
     _loadTheme(); // Load theme when cubit is initialized
   }
 
@@ -16,13 +16,14 @@ class ThemeCubit extends Cubit<ThemeData> {
 
   Future<void> toggleTheme() async {
     _isDarkMode = !_isDarkMode;
-    _saveTheme();
+    await _saveTheme();
     emit(_isDarkMode ? darkMode : lightMode);
   }
 
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    _isDarkMode = prefs.getBool(_themeKey) ?? false;
+    // If no preference is found, default to dark mode (true)
+    _isDarkMode = prefs.getBool(_themeKey) ?? true;
     emit(_isDarkMode ? darkMode : lightMode);
   }
 
@@ -31,3 +32,4 @@ class ThemeCubit extends Cubit<ThemeData> {
     await prefs.setBool(_themeKey, _isDarkMode);
   }
 }
+

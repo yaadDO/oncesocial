@@ -17,39 +17,34 @@ class FirebaseChatRepo implements ChatRepo {
   Stream<List<Message>> getMessages() {
     return _firestore
         .collection('messages')
-    // Use localTimestamp to ensure messages show immediately
-        .orderBy('localTimestamp', descending: true)
+        .orderBy('localTimestamp', descending: true).limit(50)
         .snapshots()
-        .asyncMap((snapshot) async {
-      final messages = <Message>[];
-      for (var doc in snapshot.docs) {
-        final data = doc.data();
-        // Optionally include the document id if needed:
-        data['id'] = doc.id;
-        final userProfile = await _profileRepo.fetchUserProfile(data['senderId']);
-        messages.add(Message.fromMap({
-          ...data,
-          'senderName': userProfile?.name ?? 'Anonymous',
-        }));
-      }
-      return messages;
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id; // Include document ID
+        return Message.fromMap(data);
+      }).toList();
     });
   }
+
+  String? _cachedSenderName;
 
   @override
   Future<void> sendMessage(String text) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('Not authenticated');
 
-    final userProfile = await _profileRepo.fetchUserProfile(user.uid);
+    if (_cachedSenderName == null) {
+      final userProfile = await _profileRepo.fetchUserProfile(user.uid);
+      _cachedSenderName = userProfile?.name ?? 'Anonymous';
+    }
 
     await _firestore.collection('messages').add({
       'text': text,
       'senderId': user.uid,
-      'senderName': userProfile?.name ?? 'Anonymous',
-      // Server timestamp (will be null locally at first)
+      'senderName': _cachedSenderName!,
       'timestamp': FieldValue.serverTimestamp(),
-      // Local timestamp (always set immediately)
       'localTimestamp': DateTime.now().millisecondsSinceEpoch,
     });
   }

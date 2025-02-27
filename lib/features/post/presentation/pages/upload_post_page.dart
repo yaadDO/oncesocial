@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/components/my_text_field.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
+import '../../../home/presentation/pages/home_page.dart';
 import '../../domain/entities/post.dart';
 import '../cubits/post_cubit.dart';
 import '../cubits/post_state.dart';
@@ -25,9 +26,6 @@ class _UploadPostPageState extends State<UploadPostPage> {
   Uint8List? webImage;
   final textController = TextEditingController();
   AppUser? currentUser;
-
-  // Add a flag to indicate which post type the user wants to create.
-  // When true, we will create a text post (no image)
   bool isTextPost = false;
 
   @override
@@ -58,7 +56,6 @@ class _UploadPostPageState extends State<UploadPostPage> {
   }
 
   void uploadPost() {
-    // For a text post, we require text input; for an image post, both are required.
     if (isTextPost) {
       if (textController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -80,8 +77,7 @@ class _UploadPostPageState extends State<UploadPostPage> {
       userId: currentUser!.uid,
       userName: currentUser!.name,
       text: textController.text,
-      // For a text post, imageUrl is an empty string.
-      imageUrl: isTextPost ? '' : '',
+      imageUrl: '', // For a text post, imageUrl is empty.
       timestamp: DateTime.now(),
       likes: [],
       comments: [],
@@ -96,7 +92,6 @@ class _UploadPostPageState extends State<UploadPostPage> {
         postCubit.createPost(newPost, imagePath: imagePickedFile?.path);
       }
     } else {
-      // For text posts, you can simply call createPost without an image.
       postCubit.createPost(newPost);
     }
   }
@@ -113,14 +108,23 @@ class _UploadPostPageState extends State<UploadPostPage> {
       builder: (context, state) {
         if (state is PostsLoading || state is PostUploading) {
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(child: CircularProgressIndicator()),
           );
         }
         return buildUploadPage();
       },
       listener: (context, state) {
+        if (state is PostsLoaded) {
+          // Once the posts are loaded, redirect to the HomePage.
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const HomePage()),
+                (route) => false,
+          );
+        } else if (state is PostsError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
       },
     );
   }
@@ -179,22 +183,18 @@ class _UploadPostPageState extends State<UploadPostPage> {
                     child: MyTextField(
                       controller: textController,
                       obscureText: false,
-                      hintText:
-                      isTextPost ? 'What\'s happening?' : 'Caption',
+                      hintText: isTextPost ? 'What\'s happening?' : 'Caption',
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          // Overlay the loading indicator if uploading
           if (context.watch<PostCubit>().state is PostUploading ||
               context.watch<PostCubit>().state is PostsLoading)
             Container(
               color: Colors.black.withOpacity(0.5),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: const Center(child: CircularProgressIndicator()),
             ),
         ],
       ),
@@ -207,5 +207,4 @@ class _UploadPostPageState extends State<UploadPostPage> {
       ),
     );
   }
-
 }

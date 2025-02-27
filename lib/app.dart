@@ -27,9 +27,7 @@ import 'features/search/presentation/cubits/search_cubits.dart';
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatefulWidget {
-
   MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -93,24 +91,18 @@ class _MyAppState extends State<MyApp> {
           theme: currentTheme,
           home: BlocConsumer<AuthCubit, AuthState>(
             builder: (context, authState) {
-              if (authState is Unauthenticated) {
-                return const AuthPage();
-              }
-
-              if (authState is Authenticated) {
-                return const HomePage();
-              } else {
-                return const Scaffold(
-                  body: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              }
+              if (authState is Unauthenticated) return const AuthPage();
+              if (authState is Authenticated) return const HomePage();
+              return const Scaffold(body: Center(child: CircularProgressIndicator()));
             },
             listener: (context, state) {
               if (state is AuthError) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.message)));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+              }
+              // Add this block to handle profile preloading
+              else if (state is Authenticated) {
+                final currentUserId = context.read<AuthCubit>().currentUser!.uid;
+                context.read<ProfileCubit>().fetchUserProfile(currentUserId);
               }
             },
           ),

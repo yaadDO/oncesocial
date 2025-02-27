@@ -4,11 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/notifications/notification_page.dart';
 import '../../../../responsive/constrained_scaffold.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
+import '../../../auth/presentation/cubits/auth_states.dart';
 import '../../../post/presentation/components/textpost_tile.dart';
 import '../../../post/presentation/cubits/post_cubit.dart';
 import '../../../post/presentation/cubits/post_state.dart';
 import '../../../post/presentation/pages/upload_post_page.dart';
 import '../../../privateMessaging/presentation/pages/messaging_page.dart';
+import '../../../profile/presentation/cubits/profile_cubit.dart';
 import '../../../profile/presentation/pages/profile_page.dart';
 import '../../../post/presentation/components/post_tile.dart';
 import 'package:oncesocial/features/search/presentation/pages/search_page.dart';
@@ -31,6 +33,14 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     fetchAllPosts();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authCubit = context.read<AuthCubit>();
+      if (authCubit.state is Authenticated) {
+        final currentUserId = authCubit.currentUser!.uid;
+        context.read<ProfileCubit>().fetchUserProfile(currentUserId);
+      }
+    });
   }
 
   void fetchAllPosts() {

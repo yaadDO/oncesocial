@@ -2,6 +2,7 @@
 //provides key authentication operations such as user login, registration, logout, and retrieving the currently logged-in useR
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:oncesocial/features/auth/domain/entities/app_user.dart';
 import 'package:oncesocial/features/auth/domain/repository/auth_repo.dart';
 
@@ -60,6 +61,35 @@ class FirebaseAuthRepo implements AuthRepo {
 
   }
 
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+      if (gUser == null) return null;
+
+      final GoogleSignInAuthentication gAuth = await gUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: gAuth.accessToken,
+        idToken: gAuth.idToken,
+      );
+
+      final UserCredential userCredential =
+      await firebaseAuth.signInWithCredential(credential);
+
+      // Check if new user
+      if (userCredential.additionalUserInfo!.isNewUser) {
+        await firebaseFirestore.collection('users').doc(userCredential.user!.uid).set({
+          'uid': userCredential.user!.uid,
+          'email': userCredential.user!.email,
+          'name': userCredential.user!.displayName ?? 'No Name',
+        });
+      }
+
+      return userCredential;
+    } catch (e) {
+      throw Exception('Google sign-in failed: $e');
+    }
+  }
 
   @override
   Future<void> logout() async {

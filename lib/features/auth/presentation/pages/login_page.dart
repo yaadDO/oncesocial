@@ -31,9 +31,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (email.isNotEmpty && pw.isNotEmpty) {
       authCubit.login(email, pw);
-    }
-
-    else{
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Please enter both email and password')));
     }
@@ -56,17 +54,21 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.lock_open_rounded,
-                  size: 80,
-                  color: Theme.of(context).colorScheme.primary,
+                const SizedBox(height: 5),
+                ClipOval(
+                  child: Image.asset(
+                    'assets/icon.png', // Path to the image asset
+                    width: 100, // Adjust the size as needed
+                    height: 100,
+                    fit: BoxFit.cover, // Ensures the image covers the circular area
+                  ),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 15),
                 Text(
-                  'Welcome back ',
+                  'Welcome',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                    fontSize: 25,
                   ),
                 ),
                 const SizedBox(height: 25),
@@ -107,6 +109,31 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 25),
+                IconButton(
+                  onPressed: () => context.read<AuthCubit>().signInWithGoogle(),
+                  icon: Image.asset(
+                    'assets/google_icon.png', // Add this asset to your project
+                    width: 32,
+                    height: 32,
+                  ),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.all(16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                      side: BorderSide(color: Colors.grey.shade300),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Sign in with Google',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                  fontSize: 14,
+                  ),
                 ),
               ],
             ),
