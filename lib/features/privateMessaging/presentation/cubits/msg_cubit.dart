@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/message.dart';
 import '../../domain/repositories/message_repo.dart';
-
-
 part 'msg_state.dart';
 
 class MsgCubit extends Cubit<MsgState> {
@@ -44,6 +42,18 @@ class MsgCubit extends Cubit<MsgState> {
     } catch (e) {
       emit(MsgError(e.toString()));
     }
+  }
+
+  void markMessageAsRead(String messageId) async {
+    try {
+      await msgRepo.markMessageAsRead(messageId);
+    } catch (e) {
+      emit(MsgError(e.toString()));
+    }
+  }
+
+  Stream<int> getUnreadCount(String receiverId, String senderId) {
+    return msgRepo.getUnreadCount(receiverId, senderId);
   }
 }
 

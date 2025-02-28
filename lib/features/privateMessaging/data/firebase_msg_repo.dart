@@ -38,4 +38,20 @@ class FirebaseMsgRepo implements MsgRepo {
 
     return query.docs.map((doc) => ProfileUser.fromJson(doc.data())).toList();
   }
+  @override
+  Stream<int> getUnreadCount(String receiverId, String senderId) {
+    return _firestore
+        .collection('messagesprivate')
+        .where('receiverId', isEqualTo: receiverId)
+        .where('senderId', isEqualTo: senderId)
+        .where('read', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
+
+  @override
+  Future<void> markMessageAsRead(String messageId) async {
+    await _firestore.collection('messagesprivate').doc(messageId).update({'read': true});
+  }
+
 }

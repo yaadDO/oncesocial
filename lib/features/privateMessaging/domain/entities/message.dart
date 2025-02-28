@@ -7,6 +7,7 @@ class MessagePrivate {
   final String messagepriv;
   final DateTime timestamp;
   final String chatRoomId;
+  final bool read;
 
   MessagePrivate({
     required this.id,
@@ -15,6 +16,7 @@ class MessagePrivate {
     required this.messagepriv,
     required this.timestamp,
     required this.chatRoomId,
+    this.read = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,6 +26,7 @@ class MessagePrivate {
       'messagepriv': messagepriv,
       'timestamp': timestamp,
       'chatRoomId': chatRoomId,
+      'read': read,
     };
   }
 
@@ -35,6 +38,7 @@ class MessagePrivate {
       messagepriv: map['messagepriv'],
       timestamp: (map['timestamp'] as Timestamp).toDate(),
       chatRoomId: map['chatRoomId'],
+      read: map['read'] ?? false,
     );
   }
 }

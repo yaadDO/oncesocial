@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     // Initialize notifications on app startup.
-    FirebaseApi().initNotifications();
+    //FirebaseApi().initNotifications();
   }
 
   @override

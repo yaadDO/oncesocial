@@ -37,6 +37,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _msgCubit.loadMessages(_chatRoomId);
     _scrollController = ScrollController();
     _receiverProfileFuture = FirebaseProfileRepo().fetchUserProfile(widget.receiverId);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _markMessagesAsRead());
   }
 
   @override
@@ -61,6 +62,20 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       }
     });
+  }
+
+  void _markMessagesAsRead() {
+    final currentUserId = context.read<AuthCubit>().currentUser!.uid;
+    if (_msgCubit.state is MsgLoaded) {
+      final messages = (_msgCubit.state as MsgLoaded)
+          .messagesPrivate
+          .where((msg) => msg.receiverId == currentUserId && !msg.read)
+          .toList();
+
+      for (final message in messages) {
+        _msgCubit.markMessageAsRead(message.id);
+      }
+    }
   }
 
   @override

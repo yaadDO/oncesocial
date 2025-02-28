@@ -8,7 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    await FirebaseApi().initNotifications();
+    // FirebaseApi().initNotifications();
   } catch (e) {
     print("Firebase initialization failed: $e");
   }

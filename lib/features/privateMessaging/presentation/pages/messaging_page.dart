@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:oncesocial/features/profile/presentation/cubits/profile_states.dart';
+import '../../../auth/presentation/cubits/auth_cubit.dart';
 import '../../data/firebase_msg_repo.dart';
 import '../cubits/msg_cubit.dart';
 import 'chat_screen.dart';
@@ -12,6 +13,8 @@ class MessagingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUserId = context.read<AuthCubit>().currentUser!.uid;
+
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         if (state is ProfileLoaded) {
@@ -22,15 +25,39 @@ class MessagingPage extends StatelessWidget {
                 final userId = state.profileUser.following[index];
                 final userProfile = state.followingProfiles[userId];
 
-                if (userProfile == null) {
-                  return const ListTile(title: Text('Loading...'));
-                }
-
                 return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(userProfile.profileImageUrl),
+                  leading: Stack(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(userProfile?.profileImageUrl ?? ''),
+                      ),
+                      StreamBuilder<int>(
+                        stream: context.read<MsgCubit>().getUnreadCount(currentUserId, userId),
+                        builder: (context, snapshot) {
+                          final count = snapshot.data ?? 0;
+                          if (count > 0) {
+                            return Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                padding: EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  count.toString(),
+                                  style: TextStyle(color: Colors.white, fontSize: 12),
+                                ),
+                              ),
+                            );
+                          }
+                          return SizedBox.shrink();
+                        },
+                      ),
+                    ],
                   ),
-                  title: Text(userProfile.name),
+                  title: Text(userProfile?.name ?? 'Loading...'),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -38,7 +65,7 @@ class MessagingPage extends StatelessWidget {
                         create: (context) => MsgCubit(msgRepo: FirebaseMsgRepo()),
                         child: ChatScreen(
                           receiverId: userId,
-                          receiverName: userProfile.name,
+                          receiverName: userProfile?.name ?? '',
                         ),
                       ),
                     ),
