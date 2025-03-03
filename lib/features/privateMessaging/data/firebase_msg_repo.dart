@@ -53,5 +53,4 @@ class FirebaseMsgRepo implements MsgRepo {
   Future<void> markMessageAsRead(String messageId) async {
     await _firestore.collection('messagesprivate').doc(messageId).update({'read': true});
   }
-
 }

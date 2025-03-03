@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/publicChat/presentation/components/message_bubble.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
-import '../../../notifications/notifs.dart';
 import '../cubits/chat_cubit.dart';
 import '../cubits/chat_state.dart';
 
