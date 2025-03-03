@@ -40,13 +40,36 @@ class FirebaseChatRepo implements ChatRepo {
       _cachedSenderName = userProfile?.name ?? 'Anonymous';
     }
 
+    // Extract mentioned usernames and get their UIDs
+    final mentionedUserIds = await _getMentionedUserIds(text);
+
     await _firestore.collection('messages').add({
       'text': text,
       'senderId': user.uid,
       'senderName': _cachedSenderName!,
       'timestamp': FieldValue.serverTimestamp(),
       'localTimestamp': DateTime.now().millisecondsSinceEpoch,
+      'mentionedUserIds': mentionedUserIds, // Add this field
     });
+  }
+
+  Future<List<String>> _getMentionedUserIds(String text) async {
+    final mentionRegex = RegExp(r'@(\w+)');
+    final matches = mentionRegex.allMatches(text);
+    final usernames = matches.map((m) => m.group(1)).toSet().toList();
+
+    final List<String> userIds = [];
+    for (final username in usernames) {
+      final query = await _firestore
+          .collection('users')
+          .where('name', isEqualTo: username)
+          .limit(1)
+          .get();
+      if (query.docs.isNotEmpty) {
+        userIds.add(query.docs.first.id);
+      }
+    }
+    return userIds;
   }
 
   @override

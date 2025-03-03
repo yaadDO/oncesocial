@@ -18,9 +18,9 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-
       child: GestureDetector(
-        onLongPress: isMe ? () {
+        onLongPress: isMe
+            ? () {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -35,7 +35,7 @@ class MessageBubble extends StatelessWidget {
                     Navigator.pop(context);
                     context.read<ChatCubit>().deleteMessage(message.id);
                   },
-                  icon: const Icon(Icons.delete, color: Colors.red,)
+                  icon: const Icon(Icons.delete, color: Colors.red),
                 ),
               ],
             ),
@@ -72,14 +72,8 @@ class MessageBubble extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(height: 4),
-              Text(
-                message.text,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary
-                ),
-              ),
+              _buildMessageText(context),
               if (message.timestamp == null)
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
@@ -112,5 +106,46 @@ class MessageBubble extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildMessageText(BuildContext context) {
+    final defaultColor = Theme.of(context).colorScheme.inversePrimary;
+    return RichText(
+      text: _parseMentions(message.text, defaultColor),
+    );
+  }
+
+  TextSpan _parseMentions(String text, Color defaultColor) {
+    final mentionRegex = RegExp(r'@(\w+)');
+    final List<InlineSpan> spans = [];
+    int lastIndex = 0;
+
+    for (final match in mentionRegex.allMatches(text)) {
+      if (match.start > lastIndex) {
+        spans.add(TextSpan(
+          text: text.substring(lastIndex, match.start),
+          style: TextStyle(color: defaultColor),
+        ));
+      }
+
+      spans.add(TextSpan(
+        text: text.substring(match.start, match.end),
+        style: TextStyle(
+          color: Colors.red,
+          fontWeight: FontWeight.bold,
+        ),
+      ));
+
+      lastIndex = match.end;
+    }
+
+    if (lastIndex < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(lastIndex),
+        style: TextStyle(color: defaultColor),
+      ));
+    }
+
+    return TextSpan(children: spans);
   }
 }
