@@ -47,7 +47,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     // Initialize notifications on app startup.
-    //FirebaseApi().initNotifications();
+    FirebaseApi.initNotifications();
+    FirebaseApi.setupInteractedMessage();
   }
 
   @override
@@ -99,10 +100,10 @@ class _MyAppState extends State<MyApp> {
               if (state is AuthError) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
               }
-              // Add this block to handle profile preloading
               else if (state is Authenticated) {
                 final currentUserId = context.read<AuthCubit>().currentUser!.uid;
                 context.read<ProfileCubit>().fetchUserProfile(currentUserId);
+                FirebaseApi.updateFCMToken();
               }
             },
           ),
@@ -112,7 +113,6 @@ class _MyAppState extends State<MyApp> {
             '/profile': (context) => ProfilePage(
               uid: ModalRoute.of(context)!.settings.arguments as String,
             ),
-            // Note: the route name below should match the one used in notifs.dart.
             '/NotificationPage': (context) => const NotificationPage(),
             '/MessagingPage': (context) => const MessagingPage(),
           },

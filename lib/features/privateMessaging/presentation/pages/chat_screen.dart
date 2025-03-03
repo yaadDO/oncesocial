@@ -27,6 +27,7 @@ class _ChatScreenState extends State<ChatScreen> {
   late String _chatRoomId;
   late ScrollController _scrollController;
   late Future<ProfileUser?> _receiverProfileFuture;
+  bool _hasMarkedMessagesRead = false;
 
   @override
   void initState() {
@@ -65,16 +66,22 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _markMessagesAsRead() {
+    if (_hasMarkedMessagesRead) return;
+
     final currentUserId = context.read<AuthCubit>().currentUser!.uid;
     if (_msgCubit.state is MsgLoaded) {
       final messages = (_msgCubit.state as MsgLoaded)
           .messagesPrivate
-          .where((msg) => msg.receiverId == currentUserId && !msg.read)
+          .where((msg) =>
+      msg.receiverId == currentUserId &&
+          msg.senderId == widget.receiverId &&
+          !msg.read)
           .toList();
 
       for (final message in messages) {
         _msgCubit.markMessageAsRead(message.id);
       }
+      _hasMarkedMessagesRead = true;
     }
   }
 
@@ -111,7 +118,13 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: BlocBuilder<MsgCubit, MsgState>(
+            child: BlocConsumer<MsgCubit, MsgState>(
+              listener: (context, state) {
+                // Automatically mark messages as read when they load
+                if (state is MsgLoaded) {
+                  _markMessagesAsRead();
+                }
+              },
               builder: (context, state) {
                 if (state is MsgLoaded) {
                   if (state.messagesPrivate.isEmpty) {
@@ -161,26 +174,44 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: TextField(
               controller: _textController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Type a message...',
                 border: OutlineInputBorder(),
+                // Add counter for visual feedback
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () => _textController.clear(),
+                ),
               ),
+              onChanged: (value) => setState(() {}), // Update UI for send button state
             ),
           ),
           IconButton(
             icon: const Icon(Icons.send),
+            color: _textController.text.trim().isEmpty
+                ? Colors.grey
+                : Theme.of(context).colorScheme.primary,
             onPressed: () {
+              final trimmedText = _textController.text.trim();
+              if (trimmedText.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Message cannot be empty')),
+                );
+                return;
+              }
+
               final currentUser = context.read<AuthCubit>().currentUser!;
               final message = MessagePrivate(
                 senderId: currentUser.uid,
                 receiverId: widget.receiverId,
-                messagepriv: _textController.text,
+                messagepriv: trimmedText,
                 timestamp: DateTime.now(),
                 chatRoomId: _chatRoomId,
                 id: '',
               );
               _msgCubit.sendMessage(message);
               _textController.clear();
+              _scrollToBottom();
             },
           ),
         ],

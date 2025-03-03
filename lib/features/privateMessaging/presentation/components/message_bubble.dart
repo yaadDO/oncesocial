@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Add this import for DateFormat
 import '../../domain/entities/message.dart';
-
 
 class MessageBubble extends StatelessWidget {
   final MessagePrivate messagepriv;
@@ -33,11 +33,39 @@ class MessageBubble extends StatelessWidget {
                 : Colors.blueGrey,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Text(
-            messagepriv.messagepriv,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.inversePrimary
-            ),
+          child: Column(
+            crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Text(
+                messagepriv.messagepriv,
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary),
+              ),
+              if (isMe) // Only show status indicators for our own messages
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        DateFormat('HH:mm').format(messagepriv.timestamp),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Theme.of(context).colorScheme.inversePrimary.withOpacity(0.7),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        messagepriv.read ? Icons.done_all : Icons.done,
+                        size: 12,
+                        color: messagepriv.read
+                            ? Colors.blue
+                            : Theme.of(context).colorScheme.inversePrimary.withOpacity(0.7),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
           ),
         ),
       ),
@@ -52,17 +80,15 @@ class MessageBubble extends StatelessWidget {
           title: const Text('Delete Message'),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancel'),
             ),
             IconButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                onLongPress!(); // Trigger the delete action
+                Navigator.of(context).pop();
+                onLongPress!();
               },
-              icon: const Icon(Icons.delete, color: Colors.red,)
+              icon: const Icon(Icons.delete, color: Colors.red),
             ),
           ],
         );
