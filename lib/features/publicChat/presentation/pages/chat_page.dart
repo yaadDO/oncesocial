@@ -20,9 +20,12 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
+    //Listen for incoming Firebase messages.
     _setupFirebaseNotifications();
   }
 
+  //Listens for incoming Firebase notifications
+  //Extracts the senderId from the message data and compares it with the currentUserId
   void _setupFirebaseNotifications() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       final senderId = message.data['senderId'];
@@ -30,6 +33,7 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
+  //Cleans up resources when the widget is removed from the widget tree
   @override
   void dispose() {
     _controller.dispose();
@@ -37,10 +41,19 @@ class _ChatPageState extends State<ChatPage> {
     super.dispose();
   }
 
+  //Sends a message using the ChatCubit
+  //Trims the input text to remove leading/trailing spaces.
+  void _sendMessage() {
+    final text = _controller.text.trim();
+    if (text.isNotEmpty) {
+      context.read<ChatCubit>().sendMessage(text);
+      _controller.clear();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUserId = context.read<AuthCubit>().currentUser?.uid ?? '';
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -53,6 +66,7 @@ class _ChatPageState extends State<ChatPage> {
       body: Column(
         children: [
           Expanded(
+            //Uses BlocBuilder to listen for state changes from ChatCubit.
             child: BlocBuilder<ChatCubit, ChatState>(
               builder: (context, state) {
                 if (state is ChatError) {
@@ -61,9 +75,9 @@ class _ChatPageState extends State<ChatPage> {
                 if (state is! ChatLoaded) {
                   return const Center(child: CircularProgressIndicator());
                 }
-
                 final messages = state.messages;
 
+                //Automatically scrolls to the bottom of the list when new messages are added.
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (_scrollController.hasClients) {
                     _scrollController.jumpTo(0.0);
@@ -78,13 +92,14 @@ class _ChatPageState extends State<ChatPage> {
                     final message = messages[index];
                     final isMe = message.senderId == currentUserId;
 
+                    //Delete messages by swiping to the left
                     return Dismissible(
                       key: Key(message.id),
                       direction: isMe
                           ? DismissDirection.endToStart
                           : DismissDirection.none,
                       onDismissed: (_) => context.read<ChatCubit>().deleteMessage(message.id),
-                      background: Container(color: Colors.red),
+                      background: Container(color: Colors.red.shade300),
                       child: MessageBubble(
                         message: message,
                         isMe: isMe,
@@ -118,13 +133,5 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
     );
-  }
-
-  void _sendMessage() {
-    final text = _controller.text.trim();
-    if (text.isNotEmpty) {
-      context.read<ChatCubit>().sendMessage(text);
-      _controller.clear();
-    }
   }
 }
