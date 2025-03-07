@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/message.dart';
 import '../../domain/repos/chat_repo.dart';
@@ -9,6 +8,7 @@ class ChatCubit extends Cubit<ChatState> {
   final ChatRepo chatRepo;
   StreamSubscription? _messagesSub;
 
+  //Initializes the Cubit with an initial state
   ChatCubit({required this.chatRepo}) : super(ChatInitial()) {
     _messagesSub = chatRepo.getMessages().listen((messages) {
       emit(ChatLoaded(messages));
@@ -29,7 +29,7 @@ class ChatCubit extends Cubit<ChatState> {
     }
   }
 
-
+  // Cleans up resources when the Cubit is closed.
   @override
   Future<void> close() {
     _messagesSub?.cancel();
@@ -37,12 +37,12 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   Future<void> deleteMessage(String messageId) async {
+    //Checks if the current state is ChatLoaded to ensure messages are available.
     if (state is! ChatLoaded) return;
 
     final originalMessages = (state as ChatLoaded).messages;
     final newMessages = originalMessages.where((m) => m.id != messageId).toList();
 
-    // Optimistic update
     emit(ChatLoaded(newMessages));
 
     try {

@@ -6,6 +6,7 @@ import '../../../profile/data/firebase_profile_repo.dart';
 import '../../../profile/domain/entities/profile_user.dart';
 import '../components/message_bubble.dart';
 import '../cubits/msg_cubit.dart';
+/// Add Dismissible delete to messages
 
 class ChatScreen extends StatefulWidget {
   final String receiverId;

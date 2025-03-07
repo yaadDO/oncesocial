@@ -1,10 +1,14 @@
 //todo add Animation
+import 'package:badges/badges.dart' as badges;
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oncesocial/features/notifications/notification_page.dart';
+import 'package:oncesocial/features/notifications/presentation/cubits/notification_cubit.dart';
+import 'package:oncesocial/features/notifications/presentation/cubits/notification_state.dart';
 import '../../../../responsive/constrained_scaffold.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
 import '../../../auth/presentation/cubits/auth_states.dart';
+import '../../../notifications/presentation/pages/notification_page.dart';
 import '../../../post/presentation/components/textpost_tile.dart';
 import '../../../post/presentation/cubits/post_cubit.dart';
 import '../../../post/presentation/cubits/post_state.dart';
@@ -89,9 +93,30 @@ class _HomePageState extends State<HomePage> {
                           builder: (context) => const NotificationPage(),
                         ),
                       ),
-                      icon: Icon(
-                        Icons.notifications,
-                        color: Theme.of(context).colorScheme.inversePrimary,
+                      icon: BlocBuilder<NotificationCubit, NotificationState>(
+                        builder: (context, state) {
+                          final unreadCount = context.select<NotificationCubit, int>(
+                                (cubit) => (cubit.state is NotificationsLoaded)
+                                ? (cubit.state as NotificationsLoaded)
+                                .notifications
+                                .where((n) => !n.read)
+                                .length
+                                : 0,
+                          );
+
+                          return badges.Badge(
+                            position: badges.BadgePosition.topEnd(top: -8, end: -8),
+                            badgeContent: Text(
+                              unreadCount > 9 ? '9+' : '$unreadCount',
+                              style: const TextStyle(color: Colors.white, fontSize: 10),
+                            ),
+                            showBadge: unreadCount > 0,
+                            child: Icon(
+                              Icons.notifications,
+                              color: Theme.of(context).colorScheme.inversePrimary,
+                            ),
+                          );
+                        },
                       ),
                     ),
                     IconButton(
