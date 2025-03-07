@@ -9,7 +9,7 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedScaffold(
       appBar: AppBar(
-        title: Text('Infoo'),
+        title: Text('Info'),
         centerTitle: true,
       ),
       body: const Padding(
