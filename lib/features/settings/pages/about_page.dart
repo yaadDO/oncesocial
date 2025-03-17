@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../web/constrained_scaffold.dart';
 
-import '../../../responsive/constrained_scaffold.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -9,19 +10,19 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedScaffold(
       appBar: AppBar(
-        title: Text('Info'),
+        title: Text(AppLocalizations.of(context).about),
         centerTitle: true,
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(10.0),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Release Date: TBD'),
-            SizedBox(height: 5),
-            Text('Version: 1.1'),
-            SizedBox(height: 5),
-            Text('Published by: Once Software'),
+            Text('${AppLocalizations.of(context).releaseDate}: TBD'),
+            const SizedBox(height: 5,),
+            Text('${AppLocalizations.of(context).version}: 1.1'),
+            const SizedBox(height: 5,),
+            Text('${AppLocalizations.of(context).publishedBy}: Once Software'),
           ],
         ),
       ),

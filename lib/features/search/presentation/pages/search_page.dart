@@ -1,9 +1,8 @@
 //Provides a UI for searching users. It interacts with the SearchCubit to manage the search process and display the results dynamically based on the current state
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../responsive/constrained_scaffold.dart';
+import '../../../../web/constrained_scaffold.dart';
 import '../../../profile/presentation/components/user_tile.dart';
 import '../cubits/search_cubits.dart';
 import '../cubits/search_states.dart';
@@ -47,7 +46,7 @@ class _SearchPageState extends State<SearchPage> {
         title: TextField(
           controller: searchController,
           decoration: InputDecoration(
-            hintText: 'Search users...',
+            hintText: AppLocalizations.of(context).searchUsers,
             hintStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
         ),
@@ -55,8 +54,8 @@ class _SearchPageState extends State<SearchPage> {
       body: BlocBuilder<SearchCubit, SearchState>(builder: (context, state) {
         if (state is SearchLoaded) {
           if (state.users.isEmpty) {
-            return const Center(
-              child: Text('No users found!'),
+            return Center(
+              child: Text(AppLocalizations.of(context).userNotFound),
             );
           }
 
@@ -74,8 +73,8 @@ class _SearchPageState extends State<SearchPage> {
         }
 
         //If no search has been performed yet (initial state)
-        return const Center(
-          child: Text('Start searching for users...'),
+        return Center(
+          child: Text(AppLocalizations.of(context).startSearching),
         );
       }),
     );

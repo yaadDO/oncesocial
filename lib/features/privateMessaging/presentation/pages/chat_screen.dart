@@ -6,6 +6,7 @@ import '../../../profile/data/firebase_profile_repo.dart';
 import '../../../profile/domain/entities/profile_user.dart';
 import '../components/message_bubble.dart';
 import '../cubits/msg_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 /// Add Dismissible delete to messages
 
 class ChatScreen extends StatefulWidget {
@@ -29,6 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
   late ScrollController _scrollController;
   late Future<ProfileUser?> _receiverProfileFuture;
   bool _hasMarkedMessagesRead = false;
+
 
   @override
   void initState() {
@@ -88,6 +90,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: FutureBuilder<ProfileUser?>(
@@ -129,7 +132,7 @@ class _ChatScreenState extends State<ChatScreen> {
               builder: (context, state) {
                 if (state is MsgLoaded) {
                   if (state.messagesPrivate.isEmpty) {
-                    return const Center(child: Text('No messages yet'));
+                    return Center(child: Text(l10n.noMessages));
                   }
 
                   // Check if the last message is from the current user
@@ -168,6 +171,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildMessageInput() {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -176,11 +180,11 @@ class _ChatScreenState extends State<ChatScreen> {
             child: TextField(
               controller: _textController,
               decoration: InputDecoration(
-                hintText: 'Type a message...',
-                border: OutlineInputBorder(),
+                hintText: l10n.typeMessage,
+                border: const OutlineInputBorder(),
                 // Add counter for visual feedback
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.clear),
+                  icon: const Icon(Icons.clear),
                   onPressed: () => _textController.clear(),
                 ),
               ),
@@ -196,7 +200,7 @@ class _ChatScreenState extends State<ChatScreen> {
               final trimmedText = _textController.text.trim();
               if (trimmedText.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Message cannot be empty')),
+                  SnackBar(content: Text(l10n.messageEmpty)),
                 );
                 return;
               }

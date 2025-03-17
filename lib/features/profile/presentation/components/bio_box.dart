@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BioBox extends StatelessWidget {
   final String text;
@@ -19,7 +20,7 @@ class BioBox extends StatelessWidget {
       width: double.infinity,
 
       child: Text(
-        text.isNotEmpty ? text : 'Empty Bio..',
+        text.isNotEmpty ? text : AppLocalizations.of(context).emptybio,
         style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
       ),
     );

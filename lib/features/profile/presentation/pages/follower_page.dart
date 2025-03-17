@@ -4,8 +4,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/profile/presentation/cubits/profile_cubit.dart';
-
-import '../../../../responsive/constrained_scaffold.dart';
+import '../../../../web/constrained_scaffold.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FollowerPage extends StatelessWidget {
   final List<String> followers;
@@ -31,9 +31,9 @@ class FollowerPage extends StatelessWidget {
             labelColor: Theme.of(context).colorScheme.inversePrimary,
             unselectedLabelColor: Theme.of(context).colorScheme.primary,
 
-            tabs: const [
-              Tab(text: 'Followers'),
-              Tab(text: 'Following'),
+            tabs: [
+              Tab(text: AppLocalizations.of(context).followers),
+              Tab(text: AppLocalizations.of(context).following),
             ],
           ),
         ),
@@ -42,8 +42,8 @@ class FollowerPage extends StatelessWidget {
         //Displays the content for the currently selected tab
         TabBarView(
           children: [
-            _buildUserList(followers, 'No followers', context),
-            _buildUserList(following, 'No following', context),
+            _buildUserList(followers, AppLocalizations.of(context).noFollowers, context),
+            _buildUserList(following, AppLocalizations.of(context).noFollowing, context),
           ],
         ),
       ),
@@ -76,12 +76,12 @@ class FollowerPage extends StatelessWidget {
                 onTap: () => _navigateToProfile(context, user.uid),
               );
             } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return const ListTile(
+              return ListTile(
                 leading: CircleAvatar(child: Icon(Icons.person)),
-                title: Text('Loading...'),
+                title: Text(AppLocalizations.of(context).loading),
               );
             } else {
-              return const ListTile(title: Text('User not found'));
+              return ListTile(title: Text(AppLocalizations.of(context).userNotFound));
             }
           },
         );

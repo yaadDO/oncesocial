@@ -6,10 +6,12 @@ import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/profile/presentation/cubits/profile_states.dart';
-import '../../../../responsive/constrained_scaffold.dart';
+import '../../../../web/constrained_scaffold.dart';
 import '../../../auth/presentation/components/my_text_field.dart';
 import '../../domain/entities/profile_user.dart';
 import '../cubits/profile_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class EditProfilePage extends StatefulWidget {
   //Provides the current user details
@@ -77,13 +79,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
       builder: (context, state) {
         //Displays a loading indicator when ProfileState is ProfileLoading
         if (state is ProfileLoading) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(),
-                  Text('Uploading'),
+                  Text(AppLocalizations.of(context).uploading),
                 ],
               ),
             ),
@@ -110,7 +112,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
       appBar: AppBar(
         title: Text(
-          'Edit profile',
+          AppLocalizations.of(context).editProfile,
           style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
         ),
         foregroundColor: Theme.of(context).colorScheme.primary,
@@ -168,10 +170,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: MaterialButton(
               onPressed: pickImage,
               color: Colors.blue,
-              child: const Text('Pick Image'),
+              child: Text(AppLocalizations.of(context).pickImage),
             ),
           ),
-          const Text('Bio'),
+          Text(AppLocalizations.of(context).bio),
           const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),

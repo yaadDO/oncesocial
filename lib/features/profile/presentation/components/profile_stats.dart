@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileStats extends StatelessWidget {
   final int postCount;
@@ -36,7 +37,7 @@ class ProfileStats extends StatelessWidget {
                   style: textStyleForCount,
                 ),
                 Text(
-                  'Posts',
+                  AppLocalizations.of(context).posts,
                   style: textStyleForText,
                 ),
               ],
@@ -51,7 +52,7 @@ class ProfileStats extends StatelessWidget {
                   style: textStyleForCount,
                 ),
                 Text(
-                  'Followers',
+                  AppLocalizations.of(context).followers,
                   style: textStyleForText,
                 ),
               ],
@@ -66,7 +67,7 @@ class ProfileStats extends StatelessWidget {
                   style: textStyleForCount,
                 ),
                 Text(
-                  'Following',
+                  AppLocalizations.of(context).following,
                   style: textStyleForText,
                 ),
               ],

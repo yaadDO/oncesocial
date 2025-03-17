@@ -2,10 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/auth/presentation/components/my_button.dart';
-
-import '../../../../responsive/constrained_scaffold.dart';
+import '../../../../web/constrained_scaffold.dart';
 import '../components/my_text_field.dart';
 import '../cubits/auth_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class RegisterPage extends StatefulWidget {
   final void Function()? togglePages;
@@ -27,6 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final confirmPwController = TextEditingController();
 
   void register() {
+    final l10n = AppLocalizations.of(context);
     final String name = nameController.text;
     final String email = emailController.text;
     final String pw = pwController.text;
@@ -44,13 +46,13 @@ class _RegisterPageState extends State<RegisterPage> {
       }
       else{
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Passwords does not match')));
+            SnackBar(content: Text(l10n.passwordsMismatch)));
       }
     }
 
     else {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please complete all fields')));
+          SnackBar(content: Text(AppLocalizations.of(context).completeAllFields)));
     }
   }
 
@@ -65,6 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ConstrainedScaffold(
       body: SafeArea(
         child: Padding(
@@ -84,7 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 15),
 
                 Text(
-                  'Join the Cult',
+                  l10n.joinCult,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.inversePrimary,
                     fontSize: 20,
@@ -95,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 MyTextField(
                   controller: nameController,
-                  hintText: 'Username',
+                  hintText: l10n.username,
                   obscureText: false,
                 ),
 
@@ -103,7 +106,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 MyTextField(
                   controller: emailController,
-                  hintText: 'Email',
+                  hintText: l10n.confirmPassword,
                   obscureText: false,
                 ),
 
@@ -111,7 +114,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 MyTextField(
                   controller: pwController,
-                  hintText: 'Password',
+                  hintText: l10n.password,
                   obscureText: true,
                 ),
 
@@ -119,7 +122,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 MyTextField(
                   controller: confirmPwController,
-                  hintText: 'Confirm Password',
+                  hintText: l10n.confirmPassword,
                   obscureText: true,
                 ),
 
@@ -127,7 +130,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 MyButton(
                   onTap: register,
-                  text: 'Register',
+                  text: l10n.register,
                 ),
 
                 const SizedBox(height: 10),
@@ -136,14 +139,14 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Already a member? ',
+                      l10n.alreadyMember,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
                     GestureDetector(
                       onTap: widget.togglePages,
                       child: Text(
-                        'Login Now',
+                        l10n.loginNow,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.inversePrimary,
                           fontWeight: FontWeight.bold,
@@ -174,7 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Sign in with Google',
+                  l10n.signInWithGoogle,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.inversePrimary,
                     fontSize: 14,

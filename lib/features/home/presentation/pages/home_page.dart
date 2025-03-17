@@ -1,11 +1,10 @@
 //todo add Animation
 import 'package:badges/badges.dart' as badges;
-import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/notifications/presentation/cubits/notification_cubit.dart';
 import 'package:oncesocial/features/notifications/presentation/cubits/notification_state.dart';
-import '../../../../responsive/constrained_scaffold.dart';
+import '../../../../web/constrained_scaffold.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
 import '../../../auth/presentation/cubits/auth_states.dart';
 import '../../../notifications/presentation/pages/notification_page.dart';
@@ -19,6 +18,7 @@ import '../../../profile/presentation/pages/profile_page.dart';
 import '../../../post/presentation/components/post_tile.dart';
 import 'package:oncesocial/features/search/presentation/pages/search_page.dart';
 import '../../../publicChat/presentation/pages/chat_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -103,7 +103,6 @@ class _HomePageState extends State<HomePage> {
                                 .length
                                 : 0,
                           );
-
                           return badges.Badge(
                             position: badges.BadgePosition.topEnd(top: -8, end: -8),
                             badgeContent: Text(
@@ -189,30 +188,30 @@ class _HomePageState extends State<HomePage> {
         onTap: _onNavItemTapped,
         selectedItemColor: inversePrimaryColor,
         unselectedItemColor: inversePrimaryColor.withOpacity(0.6),
-        items: const [
+        items:  [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home),
+            label: AppLocalizations.of(context).home,
             backgroundColor: Colors.cyan,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chat',
+            icon: const Icon(Icons.chat),
+            label: AppLocalizations.of(context).home,
             backgroundColor: Colors.blueGrey,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Create Post',
+            icon: const Icon(Icons.add),
+            label: AppLocalizations.of(context).createPost,
             backgroundColor: Colors.green,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.send),
-            label: 'DM',
+           BottomNavigationBarItem(
+            icon: const Icon(Icons.send),
+             label: AppLocalizations.of(context).dm,
             backgroundColor: Colors.teal,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+            icon: const Icon(Icons.person),
+            label: AppLocalizations.of(context).profile,
             backgroundColor: Colors.purple,
           ),
         ],

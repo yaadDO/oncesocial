@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../cubits/notification_cubit.dart';
 import '../cubits/notification_state.dart';
 
@@ -11,11 +11,13 @@ class NotificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: Text(l10n.notifications),
         actions: [
           IconButton(
+            tooltip: l10n.markAllRead,
             icon: const Icon(Icons.check_circle_outline),
             onPressed: () => context.read<NotificationCubit>().markAllAsRead(),
           ),
@@ -45,7 +47,7 @@ class NotificationPage extends StatelessWidget {
                 title: Text(notification.senderName),
                 subtitle: Text(notification.messageText),
                 trailing: Text(
-                  DateFormat('MMM dd, HH:mm').format(notification.timestamp),
+                  DateFormat('MMM dd, HH:mm', 'es').format(notification.timestamp),
                 ),
                 onTap: () {
                   context.read<NotificationCubit>().markAsRead(notification.id);

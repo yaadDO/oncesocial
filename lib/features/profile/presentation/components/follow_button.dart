@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FollowButton extends StatelessWidget {
   final void Function()? onPressed;
@@ -30,7 +31,7 @@ class FollowButton extends StatelessWidget {
             size: 30,
           ),
           label: Text(
-            isFollowing ? 'Kick The Opp' : 'Follow',
+            isFollowing ? AppLocalizations.of(context).kick : AppLocalizations.of(context).follow,
             style: TextStyle(
               color: Theme.of(context).colorScheme.inversePrimary,
               fontWeight: FontWeight.bold,

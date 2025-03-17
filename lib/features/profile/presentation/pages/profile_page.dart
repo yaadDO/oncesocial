@@ -7,7 +7,7 @@ import 'package:oncesocial/features/profile/presentation/cubits/profile_cubit.da
 import 'package:oncesocial/features/profile/presentation/cubits/profile_states.dart';
 import 'package:oncesocial/features/profile/presentation/pages/follower_page.dart';
 import 'package:oncesocial/features/settings/pages/settings_page.dart';
-import '../../../../responsive/constrained_scaffold.dart';
+import '../../../../web/constrained_scaffold.dart';
 import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
 import '../../../post/presentation/components/post_tile.dart';
@@ -16,6 +16,7 @@ import '../../../post/presentation/cubits/post_cubit.dart';
 import '../components/bio_box.dart';
 import '../components/profile_stats.dart';
 import 'edit_profile_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfilePage extends StatefulWidget {
   final String uid;
@@ -150,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Row(
                     children: [
                       Text(
-                        'Bio',
+                        AppLocalizations.of(context).bio,
                         style: TextStyle(
                           color:
                           Theme.of(context).colorScheme.inversePrimary,
@@ -201,8 +202,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     } else if (state is PostsLoading) {
                       return const Center(child: CircularProgressIndicator());
                     } else {
-                      return const Center(
-                        child: Text('No Posts'),
+                      return Center(
+                        child: Text(AppLocalizations.of(context).noPosts),
                       );
                     }
                   },
@@ -211,16 +212,17 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           );
         } else if (state is ProfileLoading) {
-          return const Scaffold(
+          return  Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
             ),
           );
         } else if (state is ProfileError) {
+          ///TODO: Fix this line for language localization
           return Center(child: Text('Error: ${state.message}'));
         } else {
-          return const Center(
-            child: Text('No profile found'),
+          return  Center(
+            child: Text(AppLocalizations.of(context).userNotFound),
           );
         }
       },

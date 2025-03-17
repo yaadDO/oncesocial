@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/themes/themes_cubit.dart';
-import '../../../responsive/constrained_scaffold.dart';
+import '../../../web/constrained_scaffold.dart';
 import '../../auth/presentation/cubits/auth_cubit.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'about_page.dart';
 
@@ -13,12 +14,13 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final themeCubit = context.watch<ThemeCubit>();
     bool isDarkMode = themeCubit.isDarkMode;
 
     return ConstrainedScaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(l10n.settings),
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(4, 1, 4, 4),
@@ -26,7 +28,7 @@ class SettingsPage extends StatelessWidget {
           children: [
             ListTile(
               title: Text(
-                'Dark mode',
+                l10n.darkMode,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.inversePrimary,
                 ),
@@ -40,22 +42,22 @@ class SettingsPage extends StatelessWidget {
             const SizedBox(height: 5),
             ListTile(
               title: Text(
-                'Share',
+                l10n.share,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.inversePrimary,
                 ),
               ),
-              trailing: Icon(Icons.share),
-              onTap: () => Share.share('com.once.oncesocial.oncesocial'),
+              trailing: const Icon(Icons.share),
+              onTap: () => Share.share('com.once.oncesocial'),
             ),
             ListTile(
                 title: Text(
-                  'About',
+                  l10n.about,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.inversePrimary,
                   ),
                 ),
-                trailing: Icon(Icons.info_outline),
+                trailing: const Icon(Icons.info_outline),
                 onTap: () {
                   Navigator.of(context).push(_createRoute());
                 }
@@ -63,7 +65,7 @@ class SettingsPage extends StatelessWidget {
             const Spacer(),
             ListTile(
                 title: Text(
-                  'Logout',
+                  l10n.logout,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.inversePrimary,
                   ),
@@ -74,16 +76,16 @@ class SettingsPage extends StatelessWidget {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Are you sure?'),
+                        title: Text(l10n.confirmLogout),
                         actions: <Widget>[
                           TextButton(
-                            child: const Text('Cancel'),
+                            child: Text(l10n.cancel),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
                           ),
                           TextButton(
-                            child: const Text('Logout'),
+                            child: Text(l10n.logout),
                             onPressed: () {
                               context.read<AuthCubit>().logout();
                               Navigator.of(context).pop();

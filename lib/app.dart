@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oncesocial/features/auth/data/firebase_auth_repo.dart';
 import 'package:oncesocial/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:oncesocial/features/auth/presentation/cubits/auth_states.dart';
@@ -25,25 +26,22 @@ import 'features/publicChat/presentation/cubits/chat_cubit.dart';
 import 'features/publicChat/presentation/pages/chat_page.dart';
 import 'features/search/data/firebase_search_repo.dart';
 import 'features/search/presentation/cubits/search_cubits.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 //Creates a global key that can be used to access the NavigatorState from anywhere in the app. This is useful for navigating between screens without needing a BuildContext
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatefulWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
   final firebaseAuthRepo = FirebaseAuthRepo();
-
   final firebaseProfileRepo = FirebaseProfileRepo();
-
   final firebaseStorageRepo = FirebaseStorageRepo();
-
   final firebasePostRepo = FirebasePostRepo();
-
   final firebaseSearchRepo = FirebaseSearchRepo();
 
   @override
@@ -105,6 +103,14 @@ class _MyAppState extends State<MyApp> {
         builder: (context, currentTheme) => MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: currentTheme,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+
           //BlocConsumers widget listens to the AuthCubit and rebuilds the UI based on the authentication state,
           home: BlocConsumer<AuthCubit, AuthState>(
             builder: (context, authState) {

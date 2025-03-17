@@ -5,6 +5,7 @@ import 'package:oncesocial/features/publicChat/presentation/components/message_b
 import '../../../auth/presentation/cubits/auth_cubit.dart';
 import '../cubits/chat_cubit.dart';
 import '../cubits/chat_state.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -57,7 +58,7 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Chat Publicly',
+          AppLocalizations.of(context).publicChat,
           style: TextStyle(
             color: Theme.of(context).colorScheme.inversePrimary,
           ),
@@ -117,8 +118,8 @@ class _ChatPageState extends State<ChatPage> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: const InputDecoration(
-                      hintText: 'Type a message...',
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context).typeMessage,
                     ),
                     onSubmitted: (text) => _sendMessage(),
                   ),

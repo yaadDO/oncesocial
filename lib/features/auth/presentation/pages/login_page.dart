@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/auth/presentation/components/my_button.dart';
 import 'package:oncesocial/features/auth/presentation/cubits/auth_cubit.dart';
-
-import '../../../../responsive/constrained_scaffold.dart';
+import '../../../../web/constrained_scaffold.dart';
 import '../components/my_text_field.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function()? togglePages;
@@ -46,6 +46,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ConstrainedScaffold(
       body: SafeArea(
         child: Padding(
@@ -65,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 15),
                 Text(
-                  'Welcome',
+                  l10n.welcome,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.inversePrimary,
                     fontSize: 25,
@@ -74,33 +75,33 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 25),
                 MyTextField(
                   controller: emailController,
-                  hintText: 'Email',
+                  hintText: l10n.email,
                   obscureText: false,
                 ),
                 const SizedBox(height: 15),
                 MyTextField(
                   controller: pwController,
-                  hintText: 'Password',
+                  hintText: l10n.password,
                   obscureText: true,
                 ),
                 const SizedBox(height: 15),
                 MyButton(
                   onTap: login,
-                  text: 'Login',
+                  text: l10n.login,
                 ),
                 const SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Not a member? ',
+                      l10n.notMember,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
                     GestureDetector(
                       onTap: widget.togglePages,
                       child: Text(
-                        'Register Me',
+                        l10n.registerMe,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.inversePrimary,
                           fontWeight: FontWeight.bold,
@@ -129,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Sign in with Google',
+                  l10n.signInWithGoogle,
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.inversePrimary,
                   fontSize: 14,

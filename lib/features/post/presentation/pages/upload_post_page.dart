@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -104,6 +104,7 @@ class _UploadPostPageState extends State<UploadPostPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocConsumer<PostCubit, PostState>(
       builder: (context, state) {
         if (state is PostsLoading || state is PostUploading) {
@@ -130,10 +131,11 @@ class _UploadPostPageState extends State<UploadPostPage> {
   }
 
   Widget buildUploadPage() {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          isTextPost ? 'Text Post' : 'Image Post',
+          isTextPost ? l10n.textPost : l10n.imagePost,
           style: TextStyle(
             color: Theme.of(context).colorScheme.inversePrimary,
           ),
@@ -145,7 +147,7 @@ class _UploadPostPageState extends State<UploadPostPage> {
               color: Theme.of(context).colorScheme.inversePrimary,
               size: 35,
             ),
-            tooltip: isTextPost ? 'Switch to Image Post' : 'Switch to Text Post',
+            tooltip: isTextPost ? l10n.textPost : l10n.imagePost,
             onPressed: () {
               setState(() {
                 isTextPost = !isTextPost;
@@ -183,7 +185,9 @@ class _UploadPostPageState extends State<UploadPostPage> {
                     child: MyTextField(
                       controller: textController,
                       obscureText: false,
-                      hintText: isTextPost ? 'What\'s happening?' : 'Caption',
+                      hintText: isTextPost
+                          ? l10n.whatsHappening
+                          : l10n.caption,
                     ),
                   ),
                 ],
