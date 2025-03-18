@@ -28,6 +28,7 @@ import 'features/search/data/firebase_search_repo.dart';
 import 'features/search/presentation/cubits/search_cubits.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+////TODO IMPLEMENT DRAGGABLE ACCOUNT IN MESSAGING PAGE TO ARCHIVE CHAT
 //Creates a global key that can be used to access the NavigatorState from anywhere in the app. This is useful for navigating between screens without needing a BuildContext
 final navigatorKey = GlobalKey<NavigatorState>();
 
