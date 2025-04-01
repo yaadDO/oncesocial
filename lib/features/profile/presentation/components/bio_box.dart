@@ -11,6 +11,7 @@ class BioBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -20,7 +21,7 @@ class BioBox extends StatelessWidget {
       width: double.infinity,
 
       child: Text(
-        text.isNotEmpty ? text : AppLocalizations.of(context).emptybio,
+        text.isNotEmpty ? text : l10n.emptybio,
         style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
       ),
     );

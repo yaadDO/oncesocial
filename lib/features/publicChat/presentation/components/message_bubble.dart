@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oncesocial/features/profile/presentation/pages/profile_page.dart';
 import '../../domain/entities/message.dart';
 import '../cubits/chat_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 //Used to display a chat message
 class MessageBubble extends StatelessWidget {
@@ -17,6 +18,7 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Align(
       //Aligns the message bubble to the right if isMe is true
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -27,11 +29,11 @@ class MessageBubble extends StatelessWidget {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('Delete Message'),
+              title:  Text(l10n.deleteMessage),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: Text(l10n.cancel),
                 ),
                 IconButton(
                   onPressed: () {
@@ -97,7 +99,7 @@ class MessageBubble extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Sending...',
+                        l10n.sending,
                         style: TextStyle(
                           fontSize: 10,
                           color: isMe ? Colors.white : Colors.black,

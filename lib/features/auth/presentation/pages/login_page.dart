@@ -24,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   final pwController = TextEditingController();
 
   void login() {
+    final l10n = AppLocalizations.of(context);
     final String email = emailController.text;
     final String pw = pwController.text;
 
@@ -32,8 +33,8 @@ class _LoginPageState extends State<LoginPage> {
     if (email.isNotEmpty && pw.isNotEmpty) {
       authCubit.login(email, pw);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Please enter both email and password')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(l10n.loginError)));
     }
   }
 

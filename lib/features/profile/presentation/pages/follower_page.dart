@@ -19,6 +19,7 @@ class FollowerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     //Displays two tabs at the bottom of the AppBar
     return DefaultTabController(
       length: 2,
@@ -32,8 +33,8 @@ class FollowerPage extends StatelessWidget {
             unselectedLabelColor: Theme.of(context).colorScheme.primary,
 
             tabs: [
-              Tab(text: AppLocalizations.of(context).followers),
-              Tab(text: AppLocalizations.of(context).following),
+              Tab(text: l10n.followers),
+              Tab(text: l10n.following),
             ],
           ),
         ),
@@ -42,14 +43,15 @@ class FollowerPage extends StatelessWidget {
         //Displays the content for the currently selected tab
         TabBarView(
           children: [
-            _buildUserList(followers, AppLocalizations.of(context).noFollowers, context),
-            _buildUserList(following, AppLocalizations.of(context).noFollowing, context),
+            _buildUserList(followers,l10n.noFollowers, context),
+            _buildUserList(following, l10n.noFollowing, context),
           ],
         ),
       ),
     );
   }
   Widget _buildUserList(List<String> uids, String emptyMessage, BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return uids.isEmpty
         ? Center(child: Text(emptyMessage))
         : ListView.builder(
@@ -77,11 +79,11 @@ class FollowerPage extends StatelessWidget {
               );
             } else if (snapshot.connectionState == ConnectionState.waiting) {
               return ListTile(
-                leading: CircleAvatar(child: Icon(Icons.person)),
-                title: Text(AppLocalizations.of(context).loading),
+                leading: const CircleAvatar(child: Icon(Icons.person)),
+                title: Text(l10n.loading),
               );
             } else {
-              return ListTile(title: Text(AppLocalizations.of(context).userNotFound));
+              return ListTile(title: Text(l10n.userNotFound));
             }
           },
         );

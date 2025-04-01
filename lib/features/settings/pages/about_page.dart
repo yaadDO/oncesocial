@@ -8,9 +8,10 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ConstrainedScaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context).about),
+        title: Text(l10n.about),
         centerTitle: true,
       ),
       body: Padding(
@@ -18,11 +19,11 @@ class AboutPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${AppLocalizations.of(context).releaseDate}: TBD'),
+            Text('${l10n.releaseDate}: TBD'),
             const SizedBox(height: 5,),
-            Text('${AppLocalizations.of(context).version}: 1.1'),
+            Text('${l10n.version}: 1.1'),
             const SizedBox(height: 5,),
-            Text('${AppLocalizations.of(context).publishedBy}: Once Software'),
+            Text('${l10n.publishedBy}: Once Software'),
           ],
         ),
       ),

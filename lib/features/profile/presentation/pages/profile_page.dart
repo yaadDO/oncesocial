@@ -32,9 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late final authCubit = context.read<AuthCubit>();
   // Manages fetching and updating user profile data.
   late final profileCubit = context.read<ProfileCubit>();
-
   late AppUser? currentUser = authCubit.currentUser;
-
   int postCount = 0;
 
   @override
@@ -50,6 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     // Check if the profile being viewed belongs to the authenticated user.
     bool isOwnProfile = (widget.uid == currentUser!.uid);
 
@@ -151,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Row(
                     children: [
                       Text(
-                        AppLocalizations.of(context).bio,
+                        l10n.bio,
                         style: TextStyle(
                           color:
                           Theme.of(context).colorScheme.inversePrimary,
@@ -172,9 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       final userPosts = state.posts
                           .where((post) => post.userId == widget.uid)
                           .toList();
-
                       postCount = userPosts.length;
-
                       return ListView.builder(
                         itemCount: postCount,
                         physics: const NeverScrollableScrollPhysics(),
@@ -203,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       return const Center(child: CircularProgressIndicator());
                     } else {
                       return Center(
-                        child: Text(AppLocalizations.of(context).noPosts),
+                        child: Text(l10n.noPosts),
                       );
                     }
                   },
@@ -212,7 +209,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           );
         } else if (state is ProfileLoading) {
-          return  Scaffold(
+          return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
             ),
@@ -222,7 +219,7 @@ class _ProfilePageState extends State<ProfilePage> {
           return Center(child: Text('Error: ${state.message}'));
         } else {
           return  Center(
-            child: Text(AppLocalizations.of(context).userNotFound),
+            child: Text(l10n.userNotFound),
           );
         }
       },

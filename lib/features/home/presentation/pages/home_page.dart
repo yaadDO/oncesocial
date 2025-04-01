@@ -73,6 +73,7 @@ class _HomePageState extends State<HomePage> {
     return [
       BlocBuilder<PostCubit, PostState>(
         builder: (context, state) {
+          final l10n = AppLocalizations.of(context);
           if (state is PostsLoading || state is PostUploading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is PostsLoaded) {
@@ -134,8 +135,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 // If there are no posts, fill the remaining space.
                 if (allPosts.isEmpty)
-                  const SliverFillRemaining(
-                    child: Center(child: Text('No Posts available')),
+                   SliverFillRemaining(
+                    child: Center(child: Text(l10n.noPosts)),
                   )
                 else
                 // Build a list of posts using SliverList.

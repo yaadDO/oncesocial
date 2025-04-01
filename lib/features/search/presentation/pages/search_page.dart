@@ -41,12 +41,13 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return ConstrainedScaffold(
       appBar: AppBar(
         title: TextField(
           controller: searchController,
           decoration: InputDecoration(
-            hintText: AppLocalizations.of(context).searchUsers,
+            hintText: l10n.searchUsers,
             hintStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
         ),
@@ -55,7 +56,7 @@ class _SearchPageState extends State<SearchPage> {
         if (state is SearchLoaded) {
           if (state.users.isEmpty) {
             return Center(
-              child: Text(AppLocalizations.of(context).userNotFound),
+              child: Text(l10n.userNotFound),
             );
           }
 
@@ -74,7 +75,7 @@ class _SearchPageState extends State<SearchPage> {
 
         //If no search has been performed yet (initial state)
         return Center(
-          child: Text(AppLocalizations.of(context).startSearching),
+          child: Text(l10n.startSearching),
         );
       }),
     );

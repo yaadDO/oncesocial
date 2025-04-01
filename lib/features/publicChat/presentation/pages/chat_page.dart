@@ -54,11 +54,12 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final currentUserId = context.read<AuthCubit>().currentUser?.uid ?? '';
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context).publicChat,
+          l10n.publicChat,
           style: TextStyle(
             color: Theme.of(context).colorScheme.inversePrimary,
           ),
@@ -119,7 +120,7 @@ class _ChatPageState extends State<ChatPage> {
                   child: TextField(
                     controller: _controller,
                     decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context).typeMessage,
+                      hintText: l10n.typeMessage,
                     ),
                     onSubmitted: (text) => _sendMessage(),
                   ),

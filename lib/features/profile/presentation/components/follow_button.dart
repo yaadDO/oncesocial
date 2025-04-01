@@ -13,6 +13,7 @@ class FollowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: ClipRRect(
@@ -31,7 +32,7 @@ class FollowButton extends StatelessWidget {
             size: 30,
           ),
           label: Text(
-            isFollowing ? AppLocalizations.of(context).kick : AppLocalizations.of(context).follow,
+            isFollowing ? l10n.kick : l10n.follow,
             style: TextStyle(
               color: Theme.of(context).colorScheme.inversePrimary,
               fontWeight: FontWeight.bold,

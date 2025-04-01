@@ -75,6 +75,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocConsumer<ProfileCubit, ProfileState>(
       builder: (context, state) {
         //Displays a loading indicator when ProfileState is ProfileLoading
@@ -84,8 +85,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(),
-                  Text(AppLocalizations.of(context).uploading),
+                  const CircularProgressIndicator(),
+                  Text(l10n.uploading),
                 ],
               ),
             ),
@@ -105,6 +106,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   //Displays the selected image if available or the current profile image using CachedNetworkImage.
   Widget buildEditPage() {
+    final l10n = AppLocalizations.of(context);
     return ConstrainedScaffold(
       floatingActionButton: FloatingActionButton(
           onPressed: updateProfile,
@@ -112,7 +114,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context).editProfile,
+          l10n.editProfile,
           style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
         ),
         foregroundColor: Theme.of(context).colorScheme.primary,
@@ -139,7 +141,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           fit: BoxFit.cover,
                         )
                       :
-
                       //web
                       (kIsWeb && webImage != null)
                           ? Image.memory(
@@ -170,10 +171,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: MaterialButton(
               onPressed: pickImage,
               color: Colors.blue,
-              child: Text(AppLocalizations.of(context).pickImage),
+              child: Text(l10n.pickImage),
             ),
           ),
-          Text(AppLocalizations.of(context).bio),
+          Text(l10n.bio),
           const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),

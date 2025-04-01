@@ -17,6 +17,7 @@ class ProfileStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     var textStyleForCount = TextStyle(
         fontSize: 20, color: Theme.of(context).colorScheme.inversePrimary);
 
@@ -37,7 +38,7 @@ class ProfileStats extends StatelessWidget {
                   style: textStyleForCount,
                 ),
                 Text(
-                  AppLocalizations.of(context).posts,
+                  l10n.posts,
                   style: textStyleForText,
                 ),
               ],
@@ -52,7 +53,7 @@ class ProfileStats extends StatelessWidget {
                   style: textStyleForCount,
                 ),
                 Text(
-                  AppLocalizations.of(context).followers,
+                  l10n.followers,
                   style: textStyleForText,
                 ),
               ],
@@ -67,7 +68,7 @@ class ProfileStats extends StatelessWidget {
                   style: textStyleForCount,
                 ),
                 Text(
-                  AppLocalizations.of(context).following,
+                  l10n.following,
                   style: textStyleForText,
                 ),
               ],

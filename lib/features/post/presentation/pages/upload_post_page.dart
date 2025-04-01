@@ -1,8 +1,6 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,17 +54,18 @@ class _UploadPostPageState extends State<UploadPostPage> {
   }
 
   void uploadPost() {
+    final l10n = AppLocalizations.of(context);
     if (isTextPost) {
       if (textController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Text is required for a text post')),
+          SnackBar(content: Text(l10n.textRequired)),
         );
         return;
       }
     } else {
       if (imagePickedFile == null || textController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Both image and caption are required')),
+          SnackBar(content: Text(l10n.bothRequired)),
         );
         return;
       }

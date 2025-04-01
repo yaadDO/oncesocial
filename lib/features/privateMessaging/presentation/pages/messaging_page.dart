@@ -6,13 +6,14 @@ import '../../../auth/presentation/cubits/auth_cubit.dart';
 import '../../data/firebase_msg_repo.dart';
 import '../cubits/msg_cubit.dart';
 import 'chat_screen.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Updated MessagingPage
 class MessagingPage extends StatelessWidget {
   const MessagingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final currentUserId = context.read<AuthCubit>().currentUser!.uid;
 
     return BlocBuilder<ProfileCubit, ProfileState>(
@@ -40,24 +41,24 @@ class MessagingPage extends StatelessWidget {
                               right: 0,
                               bottom: 0,
                               child: Container(
-                                padding: EdgeInsets.all(4),
-                                decoration: BoxDecoration(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
                                   color: Colors.red,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Text(
                                   count.toString(),
-                                  style: TextStyle(color: Colors.white, fontSize: 12),
+                                  style: const TextStyle(color: Colors.white, fontSize: 12),
                                 ),
                               ),
                             );
                           }
-                          return SizedBox.shrink();
+                          return const SizedBox.shrink();
                         },
                       ),
                     ],
                   ),
-                  title: Text(userProfile?.name ?? 'Loading...'),
+                  title: Text(userProfile?.name ?? l10n.loading),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(

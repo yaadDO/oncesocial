@@ -46,6 +46,7 @@
   "darkMode": "Dark Mode",
   "share": "Share",
   "about": "About",
+  "sending": "sending...",
   "logout": "Logout",
   "confirmLogout": "Are you sure?",
   "cancel": "Cancel",
