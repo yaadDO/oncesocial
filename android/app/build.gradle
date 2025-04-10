@@ -16,12 +16,12 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.once.oncesocial"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = "25.1.8937393"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
         coreLibraryDesugaringEnabled true
     }
 

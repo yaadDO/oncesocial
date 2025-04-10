@@ -19,9 +19,38 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
   final emailController = TextEditingController();
   final pwController = TextEditingController();
+  late AnimationController _shakeController;
+  late Animation<Offset> _shakeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _shakeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _shakeAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(0.1, 0),
+    ).chain(CurveTween(curve: Curves.elasticIn)).animate(_shakeController);
+
+    _startShakeTimer();
+  }
+
+  void _startShakeTimer() {
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        _shakeController.forward(from: 0).then((_) {
+          _startShakeTimer(); // Repeat after shake completes
+        });
+      }
+    });
+  }
 
   void login() {
     final l10n = AppLocalizations.of(context);
@@ -42,6 +71,7 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     emailController.dispose();
     pwController.dispose();
+    _shakeController.dispose();
     super.dispose();
   }
 
@@ -51,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
     return ConstrainedScaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -59,10 +89,10 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 5),
                 ClipOval(
                   child: Image.asset(
-                    'assets/icon.png', // Path to the image asset
-                    width: 100, // Adjust the size as needed
+                    'assets/icon.png',
+                    width: 100,
                     height: 100,
-                    fit: BoxFit.cover, // Ensures the image covers the circular area
+                    fit: BoxFit.cover,
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -90,33 +120,11 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: login,
                   text: l10n.login,
                 ),
-                const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      l10n.notMember,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                    GestureDetector(
-                      onTap: widget.togglePages,
-                      child: Text(
-                        l10n.registerMe,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.inversePrimary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 25),
                 IconButton(
                   onPressed: () => context.read<AuthCubit>().signInWithGoogle(),
                   icon: Image.asset(
-                    'assets/google_icon.png', // Add this asset to your project
+                    'assets/google_icon.png',
                     width: 32,
                     height: 32,
                   ),
@@ -133,9 +141,43 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   l10n.signInWithGoogle,
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                  fontSize: 14,
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                    fontSize: 14,
                   ),
+                ),
+                const SizedBox(height: 25),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: SlideTransition(
+                        position: _shakeAnimation,
+                        child: GestureDetector(
+                          onTap: widget.togglePages,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                l10n.registerMe,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.inversePrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22,
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_right,
+                                size: 30,
+                                color: Theme.of(context).colorScheme.inversePrimary,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                  ],
                 ),
               ],
             ),

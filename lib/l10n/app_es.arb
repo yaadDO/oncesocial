@@ -64,5 +64,6 @@
   "emptybio": "la bio está vacía",
   "follow": "seguir",
   "posts":  "publicaciones",
-  "kick": "patadas"
+  "kick": "patadas",
+  "sending": "enviando..."
 }

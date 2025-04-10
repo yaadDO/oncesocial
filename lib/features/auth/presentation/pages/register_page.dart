@@ -7,7 +7,6 @@ import '../components/my_text_field.dart';
 import '../cubits/auth_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 class RegisterPage extends StatefulWidget {
   final void Function()? togglePages;
 
@@ -20,12 +19,43 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-
+class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderStateMixin {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final pwController = TextEditingController();
   final confirmPwController = TextEditingController();
+  late AnimationController _shakeController;
+  late Animation<Offset> _shakeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize animation controller
+    _shakeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    // Modified shake animation to go left
+    _shakeAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(-0.1, 0), // Changed to negative value for left movement
+    ).chain(CurveTween(curve: Curves.elasticIn)).animate(_shakeController);
+
+    // Start repeating the shake every 3 seconds
+    _startShakeTimer();
+  }
+
+  void _startShakeTimer() {
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        _shakeController.forward(from: 0).then((_) {
+          _startShakeTimer(); // Repeat after shake completes
+        });
+      }
+    });
+  }
 
   void register() {
     final l10n = AppLocalizations.of(context);
@@ -42,7 +72,7 @@ class _RegisterPageState extends State<RegisterPage> {
         confirmPw.isNotEmpty) {
 
       if(pw == confirmPw) {
-         authCubit.register(name, email, pw);
+        authCubit.register(name, email, pw);
       }
       else{
         ScaffoldMessenger.of(context).showSnackBar(
@@ -62,6 +92,7 @@ class _RegisterPageState extends State<RegisterPage> {
     emailController.dispose();
     pwController.dispose();
     confirmPwController.dispose();
+    _shakeController.dispose();
     super.dispose();
   }
 
@@ -71,7 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return ConstrainedScaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -106,7 +137,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 MyTextField(
                   controller: emailController,
-                  hintText: l10n.confirmPassword,
+                  hintText: l10n.email, // Fixed: Changed from confirmPassword to email
                   obscureText: false,
                 ),
 
@@ -135,34 +166,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 10),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      l10n.alreadyMember,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                    GestureDetector(
-                      onTap: widget.togglePages,
-                      child: Text(
-                        l10n.loginNow,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.inversePrimary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 25),
-
                 IconButton(
                   onPressed: () => context.read<AuthCubit>().signInWithGoogle(),
                   icon: Image.asset(
-                    'assets/google_icon.png', // Add this asset to your project
+                    'assets/google_icon.png',
                     width: 37,
                     height: 37,
                   ),
@@ -182,6 +189,42 @@ class _RegisterPageState extends State<RegisterPage> {
                     color: Theme.of(context).colorScheme.inversePrimary,
                     fontSize: 14,
                   ),
+                ),
+
+                const SizedBox(height: 25),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: SlideTransition(
+                        position: _shakeAnimation,
+                        child: GestureDetector(
+                          onTap: widget.togglePages,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.arrow_left,
+                                size: 30,
+                                color: Theme.of(context).colorScheme.inversePrimary,
+                              ),
+                              Text(
+                                l10n.loginNow,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.inversePrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

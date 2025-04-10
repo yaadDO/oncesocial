@@ -64,5 +64,6 @@
   "emptybio": "La bio est vide",
   "follow": "Suivre",
   "posts": "publications",
-  "kick": "Expulser"
+  "kick": "Expulser",
+  "sending": "envoi en cours..."
 }
