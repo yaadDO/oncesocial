@@ -1,0 +1,18 @@
+workflows:
+  flutter-workflow:
+    name: oncesocial
+    environment:
+      groups:
+        - keystore_credentials # For Android signing
+      flutter: stable
+    scripts:
+      - flutter pub get
+      - flutter build apk --release # For Android
+    artifacts:
+      - build/**/outputs/apk/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - fayyaadh404@example.com
+      scripts:
+        - echo "Publishing to Firebase App Distribution...

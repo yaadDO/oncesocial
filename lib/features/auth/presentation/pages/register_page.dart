@@ -1,6 +1,10 @@
 ////todo implement a button to register with google account
+////todo implement a button to register with google account
+import 'dart:async';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:oncesocial/features/auth/presentation/components/my_button.dart';
 import '../../../../web/constrained_scaffold.dart';
 import '../components/my_text_field.dart';
@@ -24,37 +28,29 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
   final emailController = TextEditingController();
   final pwController = TextEditingController();
   final confirmPwController = TextEditingController();
-  late AnimationController _shakeController;
-  late Animation<Offset> _shakeAnimation;
+  late AnimationController _regController;
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize animation controller
-    _shakeController = AnimationController(
-      duration: const Duration(milliseconds: 500),
+    _regController = AnimationController(
       vsync: this,
+      duration: const Duration(seconds: 3),
     );
 
-    // Modified shake animation to go left
-    _shakeAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(-0.1, 0), // Changed to negative value for left movement
-    ).chain(CurveTween(curve: Curves.elasticIn)).animate(_shakeController);
+    _playRegAnimation();
 
-    // Start repeating the shake every 3 seconds
-    _startShakeTimer();
+    _timer = Timer.periodic(const Duration(seconds: 8), (timer) {
+      _playRegAnimation();
+    });
   }
 
-  void _startShakeTimer() {
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        _shakeController.forward(from: 0).then((_) {
-          _startShakeTimer(); // Repeat after shake completes
-        });
-      }
-    });
+  void _playRegAnimation() {
+    _regController
+      ..reset()
+      ..forward();
   }
 
   void register() {
@@ -92,8 +88,9 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
     emailController.dispose();
     pwController.dispose();
     confirmPwController.dispose();
-    _shakeController.dispose();
+    _regController.dispose();
     super.dispose();
+    _timer.cancel();
   }
 
   @override
@@ -102,21 +99,26 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
     return ConstrainedScaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ClipOval(
-                  child: Image.asset(
-                    'assets/icon.png',
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
+                GestureDetector(
+                  onTap: _playRegAnimation,
+                  child: Lottie.asset(
+                    'assets/animations/register.json',
+                    controller: _regController,
+                    width: 150,
+                    height: 150,
+                    fit: BoxFit.contain,
+                    repeat: false,
+                    animate: false,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Text('Error loading animation: $error');
+                    },
                   ),
                 ),
-                const SizedBox(height: 15),
-
                 Text(
                   l10n.joinCult,
                   style: TextStyle(
@@ -124,52 +126,40 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                     fontSize: 20,
                   ),
                 ),
-
-                const SizedBox(height: 9),
-
+                const SizedBox(height: 4),
                 MyTextField(
                   controller: nameController,
                   hintText: l10n.username,
                   obscureText: false,
                 ),
-
                 const SizedBox(height: 5),
-
                 MyTextField(
                   controller: emailController,
-                  hintText: l10n.email, // Fixed: Changed from confirmPassword to email
+                  hintText: l10n.email,
                   obscureText: false,
                 ),
-
                 const SizedBox(height: 5),
-
                 MyTextField(
                   controller: pwController,
                   hintText: l10n.password,
                   obscureText: true,
                 ),
-
                 const SizedBox(height: 5),
-
                 MyTextField(
                   controller: confirmPwController,
                   hintText: l10n.confirmPassword,
                   obscureText: true,
                 ),
-
-                const SizedBox(height: 10),
-
+                const SizedBox(height: 5),
                 MyButton(
                   onTap: register,
                   text: l10n.register,
                 ),
-
                 const SizedBox(height: 10),
-
                 IconButton(
                   onPressed: () => context.read<AuthCubit>().signInWithGoogle(),
                   icon: Image.asset(
-                    'assets/google_icon.png',
+                    'assets/images/google_icon.png',
                     width: 37,
                     height: 37,
                   ),
@@ -182,7 +172,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 Text(
                   l10n.signInWithGoogle,
                   style: TextStyle(
@@ -190,42 +180,43 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                     fontSize: 14,
                   ),
                 ),
-
-                const SizedBox(height: 25),
-
+                const SizedBox(height: 10),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     const Spacer(),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: SlideTransition(
-                        position: _shakeAnimation,
-                        child: GestureDetector(
-                          onTap: widget.togglePages,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.arrow_left,
-                                size: 30,
-                                color: Theme.of(context).colorScheme.inversePrimary,
+                      child: GestureDetector(
+                        onTap: widget.togglePages,
+                        behavior: HitTestBehavior.opaque,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IgnorePointer(
+                              child: AnimatedTextKit(
+                                animatedTexts: [
+                                  WavyAnimatedText(
+                                    '< ${l10n.loginNow}',
+                                    textStyle: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22,
+                                    ),
+                                    speed: const Duration(milliseconds: 200),
+                                  ),
+                                ],
+                                repeatForever: true,
                               ),
-                              Text(
-                                l10n.loginNow,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.inversePrimary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 22,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ],
-                ),
+                )
               ],
             ),
           ),

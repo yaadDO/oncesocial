@@ -1,6 +1,8 @@
-//todo implement a button to login with google account
+import 'dart:async';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:oncesocial/features/auth/presentation/components/my_button.dart';
 import 'package:oncesocial/features/auth/presentation/cubits/auth_cubit.dart';
 import '../../../../web/constrained_scaffold.dart';
@@ -19,37 +21,32 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final emailController = TextEditingController();
   final pwController = TextEditingController();
-  late AnimationController _shakeController;
-  late Animation<Offset> _shakeAnimation;
+  late AnimationController _owlController;
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
 
-    _shakeController = AnimationController(
-      duration: const Duration(milliseconds: 500),
+    _owlController = AnimationController(
       vsync: this,
+      duration: const Duration(seconds: 3),
     );
 
-    _shakeAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(0.1, 0),
-    ).chain(CurveTween(curve: Curves.elasticIn)).animate(_shakeController);
+    _playOwlAnimation();
 
-    _startShakeTimer();
+    _timer = Timer.periodic(const Duration(seconds: 8), (timer) {
+      _playOwlAnimation();
+    });
   }
 
-  void _startShakeTimer() {
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        _shakeController.forward(from: 0).then((_) {
-          _startShakeTimer(); // Repeat after shake completes
-        });
-      }
-    });
+  void _playOwlAnimation() {
+    _owlController
+      ..reset()
+      ..forward();
   }
 
   void login() {
@@ -62,8 +59,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     if (email.isNotEmpty && pw.isNotEmpty) {
       authCubit.login(email, pw);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(l10n.loginError)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.loginError)));
     }
   }
 
@@ -71,8 +68,9 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   void dispose() {
     emailController.dispose();
     pwController.dispose();
-    _shakeController.dispose();
+    _owlController.dispose();
     super.dispose();
+    _timer.cancel();
   }
 
   @override
@@ -86,16 +84,21 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 5),
-                ClipOval(
-                  child: Image.asset(
-                    'assets/icon.png',
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
+                GestureDetector(
+                  onTap: _playOwlAnimation,
+                  child: Lottie.asset(
+                    'assets/animations/owl.json',
+                    controller: _owlController,
+                    width: 225,
+                    height: 225,
+                    fit: BoxFit.contain,
+                    repeat: false,
+                    animate: false,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Text('Error loading animation: $error');
+                    },
                   ),
                 ),
-                const SizedBox(height: 15),
                 Text(
                   l10n.welcome,
                   style: TextStyle(
@@ -124,7 +127,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                 IconButton(
                   onPressed: () => context.read<AuthCubit>().signInWithGoogle(),
                   icon: Image.asset(
-                    'assets/google_icon.png',
+                    'assets/images/google_icon.png',
                     width: 32,
                     height: 32,
                   ),
@@ -147,32 +150,36 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                 ),
                 const SizedBox(height: 25),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: SlideTransition(
-                        position: _shakeAnimation,
-                        child: GestureDetector(
-                          onTap: widget.togglePages,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                l10n.registerMe,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.inversePrimary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 22,
-                                ),
+                      child: GestureDetector(
+                        onTap: widget.togglePages,
+                        behavior: HitTestBehavior.opaque,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IgnorePointer(
+                              child: AnimatedTextKit(
+                                animatedTexts: [
+                                  WavyAnimatedText(
+                                    '${l10n.registerMe} >' ,
+                                    textStyle: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22,
+                                    ),
+                                    speed: const Duration(milliseconds: 200),
+                                  ),
+                                ],
+                                repeatForever: true,
                               ),
-                              Icon(
-                                Icons.arrow_right,
-                                size: 30,
-                                color: Theme.of(context).colorScheme.inversePrimary,
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

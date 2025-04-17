@@ -160,7 +160,7 @@ class _TextPostTileState extends State<TextPostTile> {
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(2),
       ),
       child: Column(

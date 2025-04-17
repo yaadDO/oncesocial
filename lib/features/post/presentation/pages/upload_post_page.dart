@@ -203,9 +203,10 @@ class _UploadPostPageState extends State<UploadPostPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: uploadPost,
-        child: Icon(
+        backgroundColor: Colors.cyan,
+        child: const Icon(
           Icons.upload,
-          color: Theme.of(context).colorScheme.inversePrimary,
+          color: Colors.white
         ),
       ),
     );

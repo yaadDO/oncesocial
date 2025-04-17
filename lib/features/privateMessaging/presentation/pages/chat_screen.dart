@@ -7,7 +7,7 @@ import '../../../profile/domain/entities/profile_user.dart';
 import '../components/message_bubble.dart';
 import '../cubits/msg_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-/// Add Dismissible delete to messages
+///Add Dismissible delete to messages
 
 class ChatScreen extends StatefulWidget {
   final String receiverId;

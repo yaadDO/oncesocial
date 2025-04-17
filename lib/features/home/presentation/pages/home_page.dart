@@ -1,9 +1,13 @@
 //todo add Animation
 import 'package:badges/badges.dart' as badges;
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oncesocial/features/auth/domain/entities/app_user.dart';
 import 'package:oncesocial/features/notifications/presentation/cubits/notification_cubit.dart';
 import 'package:oncesocial/features/notifications/presentation/cubits/notification_state.dart';
+import 'package:oncesocial/features/profile/presentation/cubits/profile_states.dart';
 import '../../../../web/constrained_scaffold.dart';
 import '../../../auth/presentation/cubits/auth_cubit.dart';
 import '../../../auth/presentation/cubits/auth_states.dart';
@@ -13,6 +17,7 @@ import '../../../post/presentation/cubits/post_cubit.dart';
 import '../../../post/presentation/cubits/post_state.dart';
 import '../../../post/presentation/pages/upload_post_page.dart';
 import '../../../privateMessaging/presentation/pages/messaging_page.dart';
+import '../../../profile/domain/entities/profile_user.dart';
 import '../../../profile/presentation/cubits/profile_cubit.dart';
 import '../../../profile/presentation/pages/profile_page.dart';
 import '../../../post/presentation/components/post_tile.dart';
@@ -28,23 +33,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Read your PostCubit from the context
   late final PostCubit postCubit = context.read<PostCubit>();
   final PageController _pageController = PageController();
+  late final profileCubit = context.read<ProfileCubit>();
   int _currentIndex = 0;
+  AppUser? currentUser;
+  ProfileUser? postUser;
 
   @override
   void initState() {
     super.initState();
     fetchAllPosts();
+    getCurrentUser();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authCubit = context.read<AuthCubit>();
       if (authCubit.state is Authenticated) {
         final currentUserId = authCubit.currentUser!.uid;
-        context.read<ProfileCubit>().fetchUserProfile(currentUserId);
+        profileCubit.fetchUserProfile(currentUserId);
       }
     });
+  }
+
+  void getCurrentUser() {
+    final authCubit = context.read<AuthCubit>();
+    currentUser = authCubit.currentUser;
   }
 
   void fetchAllPosts() {
@@ -56,7 +69,6 @@ class _HomePageState extends State<HomePage> {
     fetchAllPosts();
   }
 
-  // Update _currentIndex and animate to the new page
   void _onNavItemTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -68,7 +80,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Returns a list of pages.
   List<Widget> _pages() {
     return [
       BlocBuilder<PostCubit, PostState>(
@@ -80,10 +91,9 @@ class _HomePageState extends State<HomePage> {
             final allPosts = state.posts;
             return CustomScrollView(
               slivers: [
-                // The SliverAppBar will hide on scroll down and reappear on scroll up.
                 SliverAppBar(
                   title: const Text('mholo'),
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
                   floating: true,
                   snap: true,
                   actions: [
@@ -96,24 +106,28 @@ class _HomePageState extends State<HomePage> {
                       ),
                       icon: BlocBuilder<NotificationCubit, NotificationState>(
                         builder: (context, state) {
-                          final unreadCount = context.select<NotificationCubit, int>(
-                                (cubit) => (cubit.state is NotificationsLoaded)
+                          final unreadCount =
+                              context.select<NotificationCubit, int>(
+                            (cubit) => (cubit.state is NotificationsLoaded)
                                 ? (cubit.state as NotificationsLoaded)
-                                .notifications
-                                .where((n) => !n.read)
-                                .length
+                                    .notifications
+                                    .where((n) => !n.read)
+                                    .length
                                 : 0,
                           );
                           return badges.Badge(
-                            position: badges.BadgePosition.topEnd(top: -8, end: -8),
+                            position:
+                                badges.BadgePosition.topEnd(top: -8, end: -8),
                             badgeContent: Text(
                               unreadCount > 9 ? '9+' : '$unreadCount',
-                              style: const TextStyle(color: Colors.white, fontSize: 10),
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 10),
                             ),
                             showBadge: unreadCount > 0,
                             child: Icon(
                               Icons.notifications,
-                              color: Theme.of(context).colorScheme.inversePrimary,
+                              color:
+                                  Theme.of(context).colorScheme.inversePrimary,
                             ),
                           );
                         },
@@ -133,16 +147,14 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                // If there are no posts, fill the remaining space.
                 if (allPosts.isEmpty)
-                   SliverFillRemaining(
+                  SliverFillRemaining(
                     child: Center(child: Text(l10n.noPosts)),
                   )
                 else
-                // Build a list of posts using SliverList.
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
-                          (context, index) {
+                      (context, index) {
                         final post = allPosts[index];
                         if (post.imageUrl.isEmpty) {
                           return TextPostTile(
@@ -177,43 +189,47 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final inversePrimaryColor = Theme.of(context).colorScheme.inversePrimary;
     return ConstrainedScaffold(
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
         children: _pages(),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+      bottomNavigationBar: CurvedNavigationBar(
+        index: _currentIndex,
+        height: 60,
+        color: Colors.cyan,
+        buttonBackgroundColor: Colors.cyan,
+        backgroundColor: Colors.transparent,
+        animationCurve: Curves.linear,
+        animationDuration: const Duration(milliseconds: 300),
         onTap: _onNavItemTapped,
-        selectedItemColor: inversePrimaryColor,
-        unselectedItemColor: inversePrimaryColor.withOpacity(0.6),
-        items:  [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
-            label: AppLocalizations.of(context).home,
-            backgroundColor: Colors.cyan,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.chat),
-            label: AppLocalizations.of(context).home,
-            backgroundColor: Colors.blueGrey,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.add),
-            label: AppLocalizations.of(context).createPost,
-            backgroundColor: Colors.green,
-          ),
-           BottomNavigationBarItem(
-            icon: const Icon(Icons.send),
-             label: AppLocalizations.of(context).dm,
-            backgroundColor: Colors.teal,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.person),
-            label: AppLocalizations.of(context).profile,
-            backgroundColor: Colors.purple,
+        items: [
+          const Icon(Icons.home, size: 30, color: Colors.white),
+          const Icon(Icons.chat, size: 30, color: Colors.white),
+          const Icon(Icons.add, size: 30, color: Colors.white),
+          const Icon(Icons.send, size: 30, color: Colors.white),
+          BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (context, state) {
+              if (state is ProfileLoaded && state.profileUser.profileImageUrl.isNotEmpty) {
+                return CachedNetworkImage(
+                  imageUrl: state.profileUser.profileImageUrl,
+                  errorWidget: (context, url, error) => const Icon(Icons.person, color: Colors.white),
+                  imageBuilder: (context, imageProvider) => Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                );
+              }
+              return const Icon(Icons.person, color: Colors.white);
+            },
           ),
         ],
       ),

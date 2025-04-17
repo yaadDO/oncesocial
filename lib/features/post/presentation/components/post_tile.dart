@@ -153,7 +153,7 @@ class _PostTileState extends State<PostTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.secondary,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           //Displays Profile Picture on Post
